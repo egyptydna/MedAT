@@ -3,398 +3,489 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MedAT BMS Quiz 2020</title>
+  <title>MedAT BMS Quiz</title>
   <style>
-    :root {
-      --bg: #f4f7fb;
-      --card: #ffffff;
-      --text: #182033;
-      --muted: #667085;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --right: #16a34a;
-      --wrong: #dc2626;
-      --border: #d9e2ef;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-    }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+      background: #f3f4f6;
+      color: #111827;
     }
-
     header {
-      background: linear-gradient(135deg, #1d4ed8, #2563eb, #60a5fa);
+      background: linear-gradient(135deg, #111827, #1d4ed8);
       color: white;
-      padding: 28px 16px;
+      padding: 28px 18px;
       text-align: center;
     }
-
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    header p {
-      margin: 8px 0 0;
-      opacity: 0.95;
-    }
-
+    header h1 { margin: 0 0 8px; font-size: 30px; }
+    header p { margin: 0; opacity: 0.9; }
     .container {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 20px 14px 60px;
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 14px 40px;
     }
-
-    .topbar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-
-    .score {
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    select, button {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 12px;
-      font-size: 15px;
+    .card {
       background: white;
-    }
-
-    button {
-      cursor: pointer;
-      background: var(--primary);
-      color: white;
-      border: none;
-      font-weight: 700;
-    }
-
-    button:hover { background: var(--primary-dark); }
-
-    .question-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 16px;
       padding: 18px;
       margin-bottom: 16px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
-
-    .meta {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .question {
-      font-size: 19px;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .answers {
+    .controls {
       display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 10px;
+      align-items: center;
     }
-
-    .answer {
-      text-align: left;
-      color: var(--text);
-      background: #f8fafc;
-      border: 1px solid var(--border);
+    select, input, button, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
       border-radius: 12px;
-      padding: 12px 14px;
-      font-weight: 500;
+      font-size: 15px;
     }
-
-    .answer:hover { background: #eef4ff; }
-
-    .answer.correct {
-      background: #dcfce7;
-      border-color: var(--right);
-      color: #14532d;
+    button {
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: 0.15s;
     }
-
-    .answer.wrong {
-      background: #fee2e2;
-      border-color: var(--wrong);
-      color: #7f1d1d;
+    button:hover { background: #1d4ed8; transform: translateY(-1px); }
+    button.secondary { background: #374151; }
+    button.green { background: #16a34a; }
+    button.red { background: #dc2626; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      text-align: center;
     }
-
-    .answer.disabled {
-      cursor: default;
-      pointer-events: none;
-      opacity: 0.95;
+    .stat {
+      padding: 14px;
+      background: #eff6ff;
+      border-radius: 12px;
+      font-weight: bold;
     }
-
+    .question {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: #ffffff;
+    }
+    .q-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .badge {
+      background: #e0e7ff;
+      color: #1e3a8a;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+    .q-text {
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1.45;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+    }
+    .answer {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin: 7px 0;
+      padding: 12px;
+      background: #f9fafb;
+      color: #111827;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    .answer:hover { background: #eef2ff; }
+    .answer.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; }
+    .answer.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
     .feedback {
-      margin-top: 12px;
-      font-weight: 700;
-    }
-
-    .note {
       margin-top: 10px;
-      color: var(--muted);
-      font-size: 14px;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+      font-weight: bold;
     }
-
+    .feedback.ok { display: block; background: #dcfce7; color: #14532d; }
+    .feedback.no { display: block; background: #fee2e2; color: #7f1d1d; }
+    .small { font-size: 13px; color: #4b5563; line-height: 1.5; }
+    details summary { cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+    textarea { min-height: 180px; font-family: monospace; }
+    .source-list li { margin-bottom: 8px; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
   <header>
-    <h1>MedAT BMS Quiz 2020</h1>
-    <p>Biologie, Chemie, Physik und Mathematik als anklickbares Quiz</p>
+    <h1>MedAT BMS Quiz</h1>
+    <p>Biologie, Chemie, Physik und Mathematik als klickbares Lernquiz</p>
   </header>
 
   <main class="container">
-    <div class="topbar">
-      <div class="panel">
-        <label for="subject"><strong>Fach auswählen</strong></label>
-        <select id="subject" onchange="renderQuiz()">
-          <option value="Alle">Alle BMS-Fragen</option>
+    <section class="card">
+      <h2>Steuerung</h2>
+      <div class="controls">
+        <select id="yearFilter">
+          <option value="all">Alle Jahre</option>
+        </select>
+        <select id="subjectFilter">
+          <option value="all">Alle BMS-Fächer</option>
           <option value="Biologie">Biologie</option>
           <option value="Chemie">Chemie</option>
           <option value="Physik">Physik</option>
-          <option value="Mathe">Mathe</option>
+          <option value="Mathematik">Mathematik</option>
         </select>
+        <input id="searchInput" placeholder="Suche nach Begriff..." />
+        <button onclick="renderQuiz()">Filtern</button>
+        <button class="secondary" onclick="shuffleQuestions()">Mischen</button>
+        <button class="red" onclick="resetQuiz()">Zurücksetzen</button>
       </div>
-      <div class="panel score" id="scoreBox">Punkte: 0 / 0</div>
-      <div class="panel"><button onclick="resetQuiz()">Quiz zurücksetzen</button></div>
-    </div>
+    </section>
 
-    <div class="panel note">
-      Hinweis: Manche Fragen aus der Altfragen-Sammlung sind unvollständig oder als Mehrfachantwort markiert. Bei diesen Fragen können mehrere richtige Antworten hinterlegt sein.
-    </div>
+    <section class="card">
+      <div class="stats">
+        <div class="stat">Fragen: <span id="totalCount">0</span></div>
+        <div class="stat">Beantwortet: <span id="answeredCount">0</span></div>
+        <div class="stat">Richtig: <span id="correctCount">0</span></div>
+        <div class="stat">Punkte: <span id="scorePercent">0%</span></div>
+      </div>
+    </section>
 
-    <section id="quiz"></section>
+    <section class="card">
+      <h2>Google-Docs automatisch laden</h2>
+      <p class="small">
+        Diese Datei enthält alle von dir gesendeten MedAT-Dokumente als Quellen. Klicke auf „Alle Quellen laden“.
+        Falls Google oder der Proxy blockiert wird, kannst du den Text aus einem Google Doc kopieren und unten manuell importieren.
+      </p>
+      <button class="green" onclick="loadAllSources()">Alle Quellen laden</button>
+      <p id="loadStatus" class="small"></p>
+      <details>
+        <summary>Quellen anzeigen</summary>
+        <ul id="sourceList" class="source-list small"></ul>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Manueller Import</h2>
+      <p class="small">
+        Falls automatisches Laden nicht geht: Google Doc öffnen → alles markieren → kopieren → hier einfügen → „Text importieren“.
+        Der Parser erkennt typische Multiple-Choice-Strukturen mit A/B/C/D/E oder Zeilen mit Antwortmöglichkeiten.
+      </p>
+      <div class="controls">
+        <select id="manualYear">
+          <option>MedAT unbekannt</option>
+          <option>MedAT 2019</option>
+          <option>MedAT 2020</option>
+          <option>MedAT 2021</option>
+          <option>MedAT 2022</option>
+          <option>MedAT 2023</option>
+          <option>MedAT 2024</option>
+          <option>MedAT 2025</option>
+        </select>
+        <select id="manualSubject">
+          <option>Automatisch erkennen</option>
+          <option>Biologie</option>
+          <option>Chemie</option>
+          <option>Physik</option>
+          <option>Mathematik</option>
+        </select>
+        <button onclick="importManualText()">Text importieren</button>
+      </div>
+      <textarea id="manualText" placeholder="Hier den Inhalt aus dem Google Doc einfügen..."></textarea>
+    </section>
+
+    <section id="quizArea"></section>
   </main>
 
-  <script>
-    const questions = [
-      // BIOLOGIE
-      {subject:'Biologie', q:'In welchem Abschnitt des Zentralnervensystems befindet sich das Atem- und Kreislaufzentrum?', a:['Hirnstamm','Großhirn','Rückenmark','Zwischenhirn','Kleinhirn'], c:[0]},
-      {subject:'Biologie', q:'Adenin liegt in einer DNA zu 27 % vor. Zu wie viel Prozent liegt Thymin vor?', a:['27 %','73 %','23 %','50 %','33 %'], c:[0]},
-      {subject:'Biologie', q:'Blutserum und Blutplasma unterscheiden sich aufgrund des Vorhandenseins bzw. Fehlens von:', a:['Gerinnungsfaktoren','Immunglobulinen','Elektrolyten','Leukozyten','Erythrozyten'], c:[0]},
-      {subject:'Biologie', q:'Aus welchem Keimblatt entsteht das Epithelgewebe des Urdarms?', a:['Entoderm','Ektoderm','Mesoderm','Exoderm','Uroderm'], c:[0]},
-      {subject:'Biologie', q:'Woraus bestehen Mikrofilamente?', a:['Mikrotubuli','Thymin','Aktin','Myosin','Tubulin'], c:[2]},
-      {subject:'Biologie', q:'Welches der genannten Gelenke ist ein Scharniergelenk?', a:['Hüftgelenk','Schulter','Fingerendgelenk','Zehengrundgelenk','Handgelenk'], c:[2]},
-      {subject:'Biologie', q:'Welche Aussage zum Lungenkreislauf ist richtig?', a:['Sauerstoffreiches Blut fließt durch die Lungenvenen in den linken Vorhof','Sauerstoffarmes Blut fließt durch die Lungenvenen in den linken Vorhof','Sauerstoffreiches Blut fließt durch die Lungenarterien in den rechten Vorhof'], c:[0]},
-      {subject:'Biologie', q:'Worin münden obere und untere Hohlvene?', a:['Rechter Vorhof','Linker Vorhof','Rechter und linker Vorhof','Linker Vorhof und linke Kammer','Obere in rechten Vorhof und untere in die Pfortader'], c:[0]},
-      {subject:'Biologie', q:'Wo liegt der Pförtner?', a:['Am Ausgang vom Magen','Am Eingang des Magens'], c:[0]},
-      {subject:'Biologie', q:'Wie wird der Zellhaufen ungefähr 100 Stunden nach der Befruchtung genannt?', a:['Morula','Blastula','Blastozyste','Zytoblast'], c:[2]},
-      {subject:'Biologie', q:'In welchen Zellen wird Glykogen gespeichert?', a:['Leberzellen','Fettzellen','Inselzellen der Bauchspeicheldrüse','Nervenzellen'], c:[0]},
-      {subject:'Biologie', q:'Was wurde durch das Miller-Urey-Experiment nachgewiesen?', a:['Abiotische Synthese von organischen Molekülen','Entstehung größerer organischer Moleküle aus kleineren','Synthese von biotischen Materialien von Organismen','Synthese von abiotischen Materialien von Organismen'], c:[0]},
-      {subject:'Biologie', q:'Was gehört neben Milz, Lymphknoten und Mandeln noch zu den lymphatischen Organen?', a:['Knochenmark','Bauchspeicheldrüse','Epiphyse','Hypophyse','Leber'], c:[0]},
-      {subject:'Biologie', q:'Was beeinträchtigt gemäß Hardy-Weinberg-Gesetz NICHT die Stabilität des Genpools?', a:['Kleine Population','Gendrift','Panmixie','Migration','Selektion'], c:[2]},
-      {subject:'Biologie', q:'Ein Muskel kann sich zusammenziehen. Wie gelangt er wieder in seine Ausgangsposition zurück?', a:['Durch die aufgebaute Spannung in den Gelenken','Nach einer gewissen Zeit springt er automatisch zurück','Nach aktiver Kontraktion folgt spontane Rückkehr','Durch einen antagonistischen Muskel','Durch die Bindegewebshülle allein'], c:[3]},
-      {subject:'Biologie', q:'Wie nennt man Fortsätze von Nervenzellen, die Erregungen vom Zellkörper wegleiten?', a:['Axone','Dendriten','Synapsen','Ranvier-Schnürringe','Aktionspotentiale'], c:[0]},
-      {subject:'Biologie', q:'Welche Kreuzung kann Nachkommen mit gelben (rr) und roten Blüten (Rr/RR) hervorbringen?', a:['Rr × RR oder Rr × Rr','RR × rr oder Rr × Rr','rr × Rr oder Rr × Rr','rr × rr oder Rr × rr','rr × rr oder Rr × Rr'], c:[2]},
-      {subject:'Biologie', q:'Was sind Desmosomen?', a:['Zellkontakte bei Epithelzellen','Zellorganellen','Fortsätze auf der Oberfläche der Zellen'], c:[0]},
-      {subject:'Biologie', q:'Wie wird der energieverbrauchende Anteil des Stoffwechsels genannt?', a:['Anabolismus','Katabolismus','Metabolismus'], c:[0]},
-      {subject:'Biologie', q:'Was kann bei Patienten zu einer längeren Blutungszeit führen?', a:['Geringe Thrombozytenzahl','Hohe Erythrozytenzahl','Niedrige Erythrozytenzahl','Hohe Thrombozytenzahl'], c:[0]},
-      {subject:'Biologie', q:'Ökosystem: Welche Aussage ist falsch?', a:['Grüne Pflanzen sind Primärkonsumenten','Viele Pilze sind Destruenten','Menschen sind Konsumenten','Bakterien können Symbiosen eingehen','Ökosysteme bestehen aus biotischen und abiotischen Faktoren'], c:[0]},
-      {subject:'Biologie', q:'Welche Aussage zu Chromosomen ist richtig?', a:['Eine ausgereifte Keimzelle besitzt 23 Chromosomen','Chromosomenzahl wird erst in der 4. Schwangerschaftswoche festgelegt','Frauen haben weniger Genmaterial als Männer','Bei Mitose gibt es zwei Teilungen','In Prophase I werden homologe Chromosomen auseinandergezogen'], c:[0]},
-      {subject:'Biologie', q:'Welche Aussage zu Genommutationen ist am passendsten?', a:['Mutationshäufigkeit hängt von Mutationsrate ab','Beispiele für Genommutationen sind Deletion und Insertion','Genommutationen können rezessiv oder dominant sein'], c:[0]},
-      {subject:'Biologie', q:'Welche Aussage zum Down-Syndrom stimmt?', a:['Wenn eine Eizelle von zwei Spermien befruchtet wird, ist das eine Aneuploidie','Genommutation der Gonosomen','Genommutation der Autosomen','Risiko wird geringer durch steigendes Alter der Mutter'], c:[2]},
-      {subject:'Biologie', q:'Ein Partikel wird von der Plasmamembran aufgenommen und nach außen abgegeben. Wie nennt man diese Vorgänge?', a:['Exozytose und Endozytose','Nur Endozytose'], c:[0]},
-      {subject:'Biologie', q:'Was beschreibt Endozytose?', a:['Einstülpung der Plasmamembran zur Aufnahme größerer Teilchen','Ausstülpung der Plasmamembran zur Abgabe von Teilchen'], c:[0]},
-      {subject:'Biologie', q:'Welches Zellorganell entsteht im Golgi-Apparat und baut Makromoleküle ab?', a:['Mitochondrium','Lysosom','Peroxisom','Proteasom','Lysozym'], c:[1]},
-      {subject:'Biologie', q:'Wo wird im Rahmen der Verdauung viel Wasser rückresorbiert?', a:['Dickdarm','Dünndarm','Magen','Speiseröhre'], c:[0]},
-      {subject:'Biologie', q:'Was macht die große Absorptionsoberfläche des Dünndarms aus?', a:['Einschichtiges Epithel','Glatte Muskulatur','Mikrovilli'], c:[2]},
-      {subject:'Biologie', q:'Was ist eine typische Eigenschaft der glatten Muskulatur des Darms?', a:['Willentliche Beeinflussbarkeit','Rasche Ermüdung','Schnelle Kontraktion','Aktive Streckung','Ausdauernde Tätigkeit'], c:[4]},
-      {subject:'Biologie', q:'TTA wird zu TTT. Um welche Mutation handelt es sich?', a:['Insertion','Deletion','Punktmutation','Inversion','Substitution'], c:[2,4]},
-      {subject:'Biologie', q:'Plazenta: Welche Aussage ist falsch?', a:['Nabelschnur verbindet Plazenta mit Uteruswand','Sie verbindet die zwei Kreisläufe nicht direkt','Sie bildet eine Barriere zwischen fetalem und mütterlichem Blutkreislauf','Medikamente können übertragen werden'], c:[0]},
-      {subject:'Biologie', q:'Wie können Ionen passiv durch die Zellmembran gelangen?', a:['Primär aktiver Transport','Erleichterte Diffusion mittels Kanälen','Sekundär aktiver Symport','Sekundär aktiver Antiport','Direkt durch Phospholipide'], c:[1]},
-      {subject:'Biologie', q:'Welches ist die korrekte Reihenfolge der Harnableitung aus dem Nierenbecken nach außen?', a:['Harnleiter - Harnblase - rechte und linke Harnröhre','Rechter und linker Harnleiter - Harnblase - rechte und linke Harnröhre','Rechte und linke Harnröhre - Harnblase - Harnleiter','Rechte und linke Harnblase - Harnleiter - Harnröhre','Rechter und linker Harnleiter - Harnblase - Harnröhre'], c:[4]},
-      {subject:'Biologie', q:'Was zum Aufbau der DNA ist korrekt?', a:['Pentose ist allein das Rückgrat der DNA','Rückgrat ist über Phosphodiesterbindungen verknüpft','Basen hängen über kovalente Bindungen zusammen'], c:[1]},
-      {subject:'Biologie', q:'Proteinbiosynthese: Was ist wahr?', a:['Translation beginnt beim Poly-A-Schwanz','tRNA transportiert Aminosäuren zu Ribosomen','Transkription beginnt an beliebiger mRNA-Stelle'], c:[1]},
-      {subject:'Biologie', q:'Welcher Sinn hat im Innenohr seine Verankerung?', a:['Gleichgewicht','Temperatur','Druck'], c:[0]},
-      {subject:'Biologie', q:'Auge: Welche Aussage ist falsch?', a:['Stäbchen sind zum Farbsehen und Zapfen zum Schwarz-Weiß-Sehen','Am blinden Fleck befindet sich die Austrittsstelle des Sehnervs','Rhodopsin kommt in Stäbchen vor','Die Brechkraft der Linse wird durch den Ziliarmuskel angepasst','Die Netzhaut enthält Fotorezeptoren und Nerven'], c:[0]},
-      {subject:'Biologie', q:'Wo befindet sich DNA beim Menschen?', a:['Zellkern und Mitochondrien','Ausschließlich im Zellkern','Zellkern und Golgi-Apparat','Endoplasmatisches Retikulum'], c:[0]},
-      {subject:'Biologie', q:'Welche Aussage zur Zellteilung bei Eukaryonten trifft zu?', a:['Menschliche Geschlechtszellen haben einen diploiden Chromosomensatz','Zellzyklus: G1 - G2 - S - M','Für die Mitose wird das Kerngenom in Mitochondrien verpackt','Crossing-over macht diploide Zellen direkt haploid','In Meiose I erfolgt die Trennung der replizierten homologen Chromosomen'], c:[4]},
+<script>
+const sources = [
+  {year:'MedAT 2019', id:'1pGLtgwooCGv0-pJBaf_sx3KwenJu4RH9JYt9H9tzYBc', url:'https://docs.google.com/document/d/1pGLtgwooCGv0-pJBaf_sx3KwenJu4RH9JYt9H9tzYBc/export?format=txt'},
+  {year:'MedAT 2020', id:'193kVOscyOrz4I2WXclY1hzypzOCPJn5FFjY8Xlz7wyE', url:'https://docs.google.com/document/d/193kVOscyOrz4I2WXclY1hzypzOCPJn5FFjY8Xlz7wyE/export?format=txt'},
+  {year:'MedAT 2021', id:'1Gcr5T2PuNklwBHkV6g-WSHm1rSfDWaFhpTm5R_LenF0', url:'https://docs.google.com/document/d/1Gcr5T2PuNklwBHkV6g-WSHm1rSfDWaFhpTm5R_LenF0/export?format=txt'},
+  {year:'MedAT 2022', id:'1ayHsWvMa8Jg5_cln3YbBH2YsUUazqUIHZikVG4Y6I7c', url:'https://docs.google.com/document/d/1ayHsWvMa8Jg5_cln3YbBH2YsUUazqUIHZikVG4Y6I7c/export?format=txt'},
+  {year:'MedAT Sammlung', id:'1oT0XwBrMxteZBhuqBl_eVwfrN8yW8G4MCumBHzPAKBA', url:'https://docs.google.com/document/d/1oT0XwBrMxteZBhuqBl_eVwfrN8yW8G4MCumBHzPAKBA/export?format=txt'},
+  {year:'MedAT 2024', id:'1zJJ0j3JUBGzj95M8IHBi-nnsSRDrOgJKeGmmOiBzHtU', url:'https://docs.google.com/document/d/1zJJ0j3JUBGzj95M8IHBi-nnsSRDrOgJKeGmmOiBzHtU/export?format=txt'},
+  {year:'MedAT 2025', id:'1mUff60AuVE0SvhWmSeEvlft9KI0mq6xt-bx_A7CDkRA', url:'https://docs.google.com/document/d/1mUff60AuVE0SvhWmSeEvlft9KI0mq6xt-bx_A7CDkRA/export?format=txt'},
+  {year:'MedAT Zusatz', id:'1zwY5nQVOZg2nK0KzfTG6iFe0mEerijJHL0M16ulHyzE', url:'https://docs.google.com/document/d/1zwY5nQVOZg2nK0KzfTG6iFe0mEerijJHL0M16ulHyzE/export?format=txt'}
+];
 
-      // CHEMIE
-      {subject:'Chemie', q:'Durch welche Maßnahme lässt sich die Lage des chemischen Gleichgewichts NICHT beeinflussen?', a:['Einsatz eines Katalysators','Verminderung von Druck','Entfernung von Produkten','Erhöhung der Temperatur','Zufuhr von Edukten'], c:[0]},
-      {subject:'Chemie', q:'Um welche funktionelle Gruppe handelt es sich? (Bildfrage aus Vorlage)', a:['Ether','Carbonsäure','Ester','Amid','Keton'], c:[2]},
-      {subject:'Chemie', q:'Triglyzerid / Fette erkennen: Welche Struktur passt grundsätzlich zu einem Fett?', a:['Glycerin mit drei Fettsäureresten über Esterbindungen','Ein einzelner Aminosäurerest','Ein Monosaccharid-Ring','Ein Nukleotid'], c:[0]},
-      {subject:'Chemie', q:'Nebengruppen: Was trifft zu?', a:['Bei den meisten Nebengruppenelementen handelt es sich um Edelmetalle','Nebengruppenelemente unterscheiden sich stärker innerhalb einer Periode als Hauptgruppenelemente','Alle Nebengruppenelemente haben höchstens 2 Valenzelektronen','Bor enthält Metalle und Nichtmetalle','Alle Nebengruppenelemente haben Oxidationszahl -II'], c:[1]},
-      {subject:'Chemie', q:'Knallgasreaktion: Welche Aussage ist falsch?', a:['Sauerstoff nimmt Elektronen auf','Wasserstoff wird oxidiert','Wasserstoff nimmt Elektronen auf','Wasserstoff ist ein Reduktionsmittel','Sauerstoff wird reduziert'], c:[2]},
-      {subject:'Chemie', q:'Normalpotential/Elektrochemie: Was trifft zu?', a:['Halbzellen sind leitend miteinander verbunden','Metallstäbe tauchen in Lösung ihrer Ionen','Unedle Metalle haben negatives Standardpotential','Edle Metalle werden reduziert','Einzelne Potentiale können nicht gemessen werden, nur Potentialdifferenzen'], c:[0,1,2,3,4]},
-      {subject:'Chemie', q:'Eine Säure hat pKs = 5,75. Was trifft zu?', a:['Es handelt sich um eine starke Säure','Das Säureanion ist eine schwache Base','Ks = 10^5,75','Sie kann in einem Puffersystem mitwirken','Alle sind richtig'], c:[1,3]},
-      {subject:'Chemie', q:'Chemische Bindungen: Was trifft zu?', a:['Salze sind klassische Beispiele für Ionenbindungen','Ionenbindungen bilden sich zwischen Elementen, die im PSE übereinanderstehen','Atombindungen bilden sich zwischen Alkalimetallen und Halogenen','Metallbindungen entstehen durch Anziehung von Anionen und Kationen','Alle sind richtig'], c:[0]},
-      {subject:'Chemie', q:'Was passiert, wenn eine Base in Wasser gelöst wird?', a:['OH⁻-Konzentration sinkt unter 10⁻⁷ mol/L','H⁺-Konzentration steigt über 10⁻⁷ mol/L','pH-Wert steigt über 7','pOH-Wert steigt über 7','pH-Wert sinkt unter 7'], c:[2]},
-      {subject:'Chemie', q:'2A + B ⇌ C + D, ΔH = -245 kJ/mol: Welche Aussage trifft zu?', a:['MWG: ([C]·[D])/([2A]·[B])','Wenn man B entfernt, verschiebt sich das Gleichgewicht nach rechts','Wenn man C hinzufügt, verschiebt sich das Gleichgewicht nach links','ΔH beschreibt die Entropie','Alle sind richtig'], c:[2]},
-      {subject:'Chemie', q:'Welche Aussage zu Gemischen ist richtig?', a:['Eine Emulsion ist ein Gas in einer Flüssigkeit','Eine Suspension ist ein Feststoff in einer Flüssigkeit','Rauch ist eine Form von Nebel','Vermischung von Gasen ist Rauch','Alle sind richtig'], c:[1]},
-      {subject:'Chemie', q:'Nach welchem Ordnungsprinzip werden Elemente im PSE angeordnet?', a:['Aufsteigende Massenzahl','Aufsteigende Kernladungszahl','Aufsteigende Elektronenanzahl','Neutronenanzahl','Alle sind richtig'], c:[1]},
-      {subject:'Chemie', q:'Welche Aussage zur organischen Chemie ist richtig?', a:['Organische Moleküle bestehen ausschließlich aus C und H','Kohlenwasserstoffe bestehen aus unpolaren Molekülen','Moleküle mit Doppelbindungen heißen Alkine','Alkene haben mindestens eine Dreifachbindung','Ein Molekül mit zwei C-Atomen kann Butan heißen'], c:[1]},
-      {subject:'Chemie', q:'Man kennt Massenzahl und Protonenzahl. Was stimmt beim neutralen Atom?', a:['Gleich viele Elektronen wie Nukleonen','Gleich viele Elektronen in der Hülle wie Protonen im Kern','Immer gleich viele Protonen wie Neutronen','Gleich viele Valenzelektronen wie Protonen','Alle sind richtig'], c:[1]},
-      {subject:'Chemie', q:'Chemische Reaktionen: Was trifft zu?', a:['Gesamtvolumen aller Reaktionsteilnehmer ist konstant','Masse bleibt konstant','Stoffmenge aller Moleküle bleibt gleich','Stoffmenge aller Atome bleibt gleich','Alle sind richtig'], c:[1,3]},
-      {subject:'Chemie', q:'Gesetz von Gay-Lussac bei konstantem Druck: Was trifft zu?', a:['Produkt aus Temperatur und Volumen ist konstant','V/T ist konstant','Volumen und Temperatur sind direkt proportional'], c:[1,2]},
-      {subject:'Chemie', q:'Wie lautet die Formel von Eisen(III)-oxid?', a:['Fe₂O₃','Fe₃O₂','FeO₂','FeO','Fe₃O'], c:[0]},
-      {subject:'Chemie', q:'Welche Aussage zu Phasenübergängen ist richtig?', a:['Beim Gefrieren wird Wärme abgegeben','Beim Schmelzen wird Wärme abgegeben','Beim Verdampfen wird Wärme abgegeben','Sublimieren ist exotherm','Beim Resublimieren wird der Umgebung Wärme entzogen'], c:[0]},
-      {subject:'Chemie', q:'Bei welchem Prozess wird Energie aus dem Atomkern frei?', a:['Spaltung von schweren Kernen','Entfernung von Elektronen aus dem Atomkern','Spaltung von leichten Kernen','Fusion von schweren Kernen','Alle sind richtig'], c:[0]},
-      {subject:'Chemie', q:'Welche Bindungsart besteht zwischen gegenüberliegenden Basen in der DNA?', a:['Ionenbindung','Wasserstoffbrückenbindungen','Kovalente Bindung','Koordinative Bindung','Van-der-Waals-Kräfte'], c:[1]},
-      {subject:'Chemie', q:'Welche Aussage zur Entropie ist richtig?', a:['Bei 0 °C haben Stoffe geringstmögliche Entropie','Bei 0 K findet keine Teilchenbewegung mehr statt','Beim Verdampfen nimmt Entropie ab','Beim Schmelzen nimmt Entropie ab','Beim Erstarren nimmt Entropie ab'], c:[1,4]},
-      {subject:'Chemie', q:'Welche Oxidationszahl hat Sauerstoff in H₂O₂?', a:['+1','-1','0','-2','+2'], c:[1]},
-      {subject:'Chemie', q:'Welche Aussagen zu Nukleinsäuren sind richtig?', a:['Einzelstränge sind über Wasserstoffbrücken zu Doppelsträngen verknüpft','Pentosen sind über Phosphodiesterbindungen verknüpft','Basen sind über kovalente Bindungen miteinander verknüpft','DNA hat ein Zucker-Phosphat-Rückgrat','Alle sind richtig'], c:[0,1,3]},
-      {subject:'Chemie', q:'Welche Aussagen zu Sauerstoff sind korrekt?', a:['Molekularer Sauerstoff hat die Summenformel O₂','Ozon ist eine besondere Form von Sauerstoff','Sauerstoff ist Hauptbestandteil der Luft','Sauerstoff hat 8 Valenzelektronen','Sauerstoff hat Ordnungszahl 8','Sauerstoff ist ein Produkt der Photosynthese'], c:[0,1,4,5]},
-      {subject:'Chemie', q:'Was ist ein Produkt der Photosynthese?', a:['Sauerstoff','Wasser','Kohlendioxid','²³⁵U','Alle sind richtig'], c:[0]},
+let questions = [];
+let answered = new Map();
+let correct = new Map();
 
-      // PHYSIK
-      {subject:'Physik', q:'Die Auffächerung von weißem Licht beim Regenbogen entsteht durch:', a:['wellenlängenabhängige Absorption','wellenlängenabhängige Totalreflexion','wellenlängenabhängige Beugung','wellenlängenabhängige Streuung','wellenlängenabhängige Brechung'], c:[4]},
-      {subject:'Physik', q:'Was besagt die Heisenbergsche Unschärferelation?', a:['Ort und Impuls können nicht gleichzeitig exakt bestimmt werden','Ort und Impuls können gleichzeitig genau bestimmt werden','Energie und Zeit können gleichzeitig beliebig genau bestimmt werden','Masse und Ort können nicht gleichzeitig bestimmt werden','Zeit und Geschwindigkeit können nicht gleichzeitig bestimmt werden'], c:[0]},
-      {subject:'Physik', q:'Als was wird Licht in der Physik gewertet?', a:['Fluss von Teilchen','Elektromagnetische Welle','Elektrostatische Interaktion','Phlogiston'], c:[0,1]},
-      {subject:'Physik', q:'Wer gilt als Begründer des Quantenmodells / der Quantenhypothese?', a:['Rutherford','Planck','Maxwell'], c:[1]},
-      {subject:'Physik', q:'Licht geht von Glas in Luft über. Was passiert beim Durchqueren der Luft?', a:['Die Lichtgeschwindigkeit ändert sich','Die Wellenlänge bleibt konstant','Eintrittswinkel hängt nicht mit Austrittswinkel zusammen','Die Frequenz ändert sich'], c:[0]},
-      {subject:'Physik', q:'Wie lautet die Formelidee für Arbeit?', a:['Kraft mal Länge des Hebels','Kraft in Richtung der Kraftwirkung mal Weglänge','Kraft mal Zeit','Masse mal Beschleunigung'], c:[1]},
-      {subject:'Physik', q:'Was bezeichnet der Doppler-Effekt?', a:['Frequenzänderung bei Relativbewegung zwischen Sender und Empfänger','Immer niedrigere Frequenz bei Bewegung','Immer höhere Frequenz bei Bewegung','Auslöschung der Wellen'], c:[0]},
-      {subject:'Physik', q:'Welche Dimension/Einheit hat das Drehmoment?', a:['m/s','Newton','Joule','Nm'], c:[3]},
-      {subject:'Physik', q:'Induktion: Was trifft zu, wenn eine Leiterschleife im Magnetfeld bewegt wird?', a:['Nur bei Translation, nicht bei Rotation, kommt es zur Induktion','Geschwindigkeit hat keinen Einfluss auf induzierte Spannung','Liegt die Schleife vollständig in homogenem Magnetfeld und der Fluss ändert sich nicht, tritt keine Induktion auf','Bei gleichmäßiger Hin- und Herbewegung entsteht keine Induktion'], c:[2]},
-      {subject:'Physik', q:'Wo ist die elektrische Feldstärke bei Hochspannungsleitungen bezogen auf den Boden am höchsten?', a:['Direkt beim Holzmast','Direkt beim Metallmast','In der Mitte zwischen den Masten, wo die Leitung dem Boden am nächsten ist','Überall gleich stark'], c:[2]},
-      {subject:'Physik', q:'Was ist KEINE SI-Basiseinheit?', a:['Kraft (Newton)','Temperatur (Kelvin)','Stromstärke (Ampere)','Lichtstärke (Candela)','Stoffmenge (Mol)'], c:[0]},
-      {subject:'Physik', q:'Welche Aussage zum Atomdurchmesser ist richtig?', a:['Kerndurchmesser im Nanometerbereich','Elektronenhülle nur 10-mal so groß wie Kern','Atomdurchmesser 10 nm','Atomdurchmesser etwa 0,1 nm','Elektronenhülle 100-mal so groß wie Kern'], c:[3]},
-      {subject:'Physik', q:'Welche v(t)-Skizze zeigt gleichförmig beschleunigte Bewegung?', a:['Lineare Gerade mit positiver Steigung','Parabel','Lineare Gerade mit stärkerer positiver Steigung','Potenzfunktion dritten Grades','Gerade parallel zur x-Achse'], c:[0,2]},
-      {subject:'Physik', q:'Federpendel: Welche Aussage ist richtig?', a:['Zu jedem Zeitpunkt ist potentielle Energie gleich kinetischer Energie','Die Gesamtenergie bleibt konstant'], c:[1]},
-      {subject:'Physik', q:'Kirchhoffsche Gesetze: Welche Aussage trifft zu?', a:['Stromstärke ist immer größer','Aus Ladungserhaltung folgt: Im Knoten ist Summe der zu- und abfließenden Ströme null','Die Richtung der Masche ist für das Ergebnis entscheidend'], c:[1]},
-      {subject:'Physik', q:'Chloroplasten wandeln Sonnenenergie in Glucose um. Welches Prinzip passt dazu?', a:['1. Newtonsches Axiom','Snellius','Bernoulli','Archimedes-Prinzip','Energieerhaltung','Brechungsindex'], c:[4]},
-      {subject:'Physik', q:'Was wird mit der Radiokarbonmethode bestimmt?', a:['Verhältnis von C-12 und C-14','Löslichkeit von C-14','Löslichkeit von X','Verhältnis von K-40 und C-14'], c:[0]},
-      {subject:'Physik', q:'Temperaturskalen: Welche Aussage ist falsch?', a:['Die Kelvinskala ist sowohl im negativen als auch positiven Wertebereich definiert','Temperaturunterschiede können in Kelvin und Celsius angegeben werden','Ein Temperaturunterschied von 1 °C entspricht 1 K','Wasser gefriert ungefähr bei 274 K'], c:[0]},
+function setup() {
+  const yearFilter = document.getElementById('yearFilter');
+  [...new Set(sources.map(s => s.year))].forEach(y => {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    yearFilter.appendChild(opt);
+  });
+  document.getElementById('sourceList').innerHTML = sources.map(s =>
+    `<li><b>${s.year}</b>: <a href="https://docs.google.com/document/d/${s.id}/mobilebasic" target="_blank">öffnen</a></li>`
+  ).join('');
+  addStarterQuestions();
+  renderQuiz();
+}
 
-      // MATHE
-      {subject:'Mathe', q:'Wie berechnet sich das Volumen V eines Quaders mit Kantenlängen a, b und c?', a:['V = 2abc','V = a + b + c','V = abc','V = 2(ab + ac + bc)','V = (a+b+c)³'], c:[2]},
-      {subject:'Mathe', q:'Welche Einheit gehört zur Aktivität?', a:['Bq','Sv','Gy'], c:[0]},
-      {subject:'Mathe', q:'1 Terabyte dividiert durch 100 Megabyte ergibt ungefähr:', a:['1 Million','10⁹','10⁶','10000','1×10⁵'], c:[3]},
-      {subject:'Mathe', q:'Zu 2 Hektar werden 200 m² dazugekauft. Wie groß ist die Totalfläche?', a:['0,202 km²','22·10³ m²','20200 m²'], c:[2]},
-      {subject:'Mathe', q:'Welche Umrechnung ist richtig?', a:['72 km/h = 20 m/s'], c:[0]},
-      {subject:'Mathe', q:'V = (a³ · b²) / c². Welche Aussage stimmt?', a:['Wenn a und c verdoppelt werden, vervierfacht sich V','Wenn a verdoppelt und b geviertelt wird, ist V halb so groß','Wenn a und b verdoppelt werden, verachtfacht sich V','Wenn c verdoppelt wird, viertelt sich V'], c:[1,3]},
-      {subject:'Mathe', q:'Rechtwinkliges Dreieck: Welche Beziehung ist korrekt?', a:['cos = Gegenkathete / Hypotenuse','sin = Ankathete / Hypotenuse','tan = Gegenkathete / Ankathete'], c:[2]},
-      {subject:'Mathe', q:'x₁ + x₂ = 10 und x₁ - x₂ = 0. Was sind x₁ und x₂?', a:['x₁ = x₂ = 5','x₁ = 10, x₂ = 0','x₁ = x₂ = 2'], c:[0]},
-      {subject:'Mathe', q:'Wie kann man 3 ppm Kohlenmonoxid in 1 L Luft ausdrücken?', a:['3 µL/L','10⁶/L'], c:[0]},
-      {subject:'Mathe', q:'Steigungsdreieck: Welche Aussagen sind richtig?', a:['Mehr als 100 % Steigung sind nicht möglich','Ein Steigungswinkel von 45° entspricht 100 % Steigung','Der Steigungswinkel kann über tan(α)=Δy/Δx berechnet werden'], c:[1,2]},
-      {subject:'Mathe', q:'Vektorsubtraktion: V₁ = (-10,1), V₂ = (2,-5). Was ist V₁ - V₂?', a:['(-12,6)','(12,6)','(12,-6)'], c:[0]},
-      {subject:'Mathe', q:'Vereinfache den Ausdruck (-5)^4 · 3.', a:['(-15)^8','(-15)^4','Es gibt keine Vereinfachung zu einer einzigen Potenz mit Basis -15'], c:[2]}
-    ];
+function addStarterQuestions() {
+  questions = [
+    {
+      year:'Beispiel', subject:'Biologie',
+      text:'In welchem Abschnitt des Zentralnervensystems befindet sich das Atem- und Kreislaufzentrum?',
+      answers:['Großhirn','Rückenmark','Hirnstamm','Zwischenhirn','Kleinhirn'], correctIndex:2,
+      explanation:'Das Atem- und Kreislaufzentrum liegt im Hirnstamm, besonders in der Medulla oblongata.'
+    },
+    {
+      year:'Beispiel', subject:'Chemie',
+      text:'Welche Aussage beschreibt eine Säure nach Brønsted?',
+      answers:['Elektronenakzeptor','Protonendonator','Protonenakzeptor','Elektronendonator','Neutronendonator'], correctIndex:1,
+      explanation:'Eine Brønsted-Säure gibt Protonen, also H⁺, ab.'
+    },
+    {
+      year:'Beispiel', subject:'Physik',
+      text:'Welche Einheit entspricht der Arbeit bzw. Energie?',
+      answers:['Newton','Watt','Joule','Pascal','Volt'], correctIndex:2,
+      explanation:'Arbeit und Energie werden in Joule angegeben. 1 J = 1 N·m.'
+    },
+    {
+      year:'Beispiel', subject:'Mathematik',
+      text:'Was ist 10² · 10³?',
+      answers:['10⁵','10⁶','10¹','20⁵','100⁶'], correctIndex:0,
+      explanation:'Bei gleicher Basis werden die Exponenten addiert: 10² · 10³ = 10⁵.'
+    }
+  ];
+}
 
-    let answered = new Map();
+async function loadAllSources() {
+  const status = document.getElementById('loadStatus');
+  status.textContent = 'Lade Quellen...';
+  let totalAdded = 0;
+  let failed = [];
 
-    function currentQuestions() {
-      const subject = document.getElementById('subject').value;
-      return subject === 'Alle' ? questions : questions.filter(q => q.subject === subject);
+  for (const src of sources) {
+    try {
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(src.url);
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const parsed = parseQuestions(text, src.year, 'Automatisch erkennen');
+      totalAdded += parsed.length;
+      questions.push(...parsed);
+      status.textContent = `${src.year}: ${parsed.length} Fragen geladen. Insgesamt neu: ${totalAdded}`;
+    } catch (e) {
+      failed.push(src.year);
+    }
+  }
+  removeDuplicateQuestions();
+  renderQuiz();
+  status.textContent = `Fertig. Neu erkannte Fragen: ${totalAdded}. Fehlgeschlagen: ${failed.length ? failed.join(', ') : 'keine'}.`;
+}
+
+function importManualText() {
+  const text = document.getElementById('manualText').value.trim();
+  if (!text) return alert('Bitte zuerst Text einfügen.');
+  const year = document.getElementById('manualYear').value;
+  const subject = document.getElementById('manualSubject').value;
+  const parsed = parseQuestions(text, year, subject);
+  questions.push(...parsed);
+  removeDuplicateQuestions();
+  renderQuiz();
+  alert(parsed.length + ' Fragen importiert.');
+}
+
+function parseQuestions(raw, defaultYear, defaultSubject) {
+  let text = raw
+    .replace(/\r/g, '')
+    .replace(/[•●]/g, '-')
+    .replace(/\u00a0/g, ' ')
+    .replace(/Antwort\s*:/gi, 'Lösung:')
+    .trim();
+
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const result = [];
+  let currentSubject = defaultSubject === 'Automatisch erkennen' ? 'Unbekannt' : defaultSubject;
+
+  const subjectFromLine = (line) => {
+    const l = line.toLowerCase();
+    if (l.includes('biologie')) return 'Biologie';
+    if (l.includes('chemie')) return 'Chemie';
+    if (l.includes('physik')) return 'Physik';
+    if (l.includes('mathe') || l.includes('mathematik')) return 'Mathematik';
+    return null;
+  };
+
+  let block = [];
+  function flushBlock() {
+    if (block.length < 2) { block = []; return; }
+    const q = parseBlock(block, defaultYear, currentSubject);
+    if (q) result.push(q);
+    block = [];
+  }
+
+  for (const line of lines) {
+    const subj = subjectFromLine(line);
+    if (subj) currentSubject = subj;
+
+    const startsQuestion = /^(\d+[.)]|Frage\s*\d+|[A-ZÄÖÜ][^.!?]{10,}\?)\s*/i.test(line) || line.endsWith('?');
+    const isAnswerLine = /^([A-Ea-e][).:]|[-–])\s+/.test(line);
+    const isSolutionLine = /^(Lösung|Richtig|Antwort)\s*[:=]/i.test(line);
+
+    if (startsQuestion && block.length && block.some(x => /^([A-Ea-e][).:]|[-–])\s+/.test(x))) {
+      flushBlock();
+    }
+    if (startsQuestion || isAnswerLine || isSolutionLine || block.length) {
+      block.push(line);
+    }
+  }
+  flushBlock();
+  return result;
+}
+
+function parseBlock(block, year, subject) {
+  let qTextParts = [];
+  let answers = [];
+  let correctIndex = null;
+  let explanation = '';
+
+  for (let line of block) {
+    const sol = line.match(/^(Lösung|Richtig|Antwort)\s*[:=]\s*(.+)$/i);
+    if (sol) {
+      const value = sol[2].trim();
+      explanation = 'Lösung laut importiertem Text: ' + value;
+      const letter = value.match(/[A-E]/i);
+      if (letter) correctIndex = letter[0].toUpperCase().charCodeAt(0) - 65;
+      continue;
     }
 
-    function renderQuiz() {
-      const quiz = document.getElementById('quiz');
-      quiz.innerHTML = '';
-      const list = currentQuestions();
-
-      list.forEach((item, index) => {
-        const globalIndex = questions.indexOf(item);
-        const card = document.createElement('div');
-        card.className = 'question-card';
-        card.innerHTML = `
-          <div class="meta">${item.subject} · Frage ${index + 1} von ${list.length}${item.c.length > 1 ? ' · Mehrfachantwort möglich' : ''}</div>
-          <div class="question">${escapeHTML(item.q)}</div>
-          <div class="answers"></div>
-          <div class="feedback" id="feedback-${globalIndex}"></div>
-        `;
-
-        const answersDiv = card.querySelector('.answers');
-        item.a.forEach((answer, answerIndex) => {
-          const btn = document.createElement('button');
-          btn.className = 'answer';
-          btn.textContent = answer;
-          btn.onclick = () => checkAnswer(globalIndex, answerIndex, btn, card);
-          answersDiv.appendChild(btn);
-        });
-
-        quiz.appendChild(card);
-
-        if (answered.has(globalIndex)) {
-          restoreCard(globalIndex, card);
-        }
-      });
-
-      updateScore();
+    const ans = line.match(/^([A-Ea-e])[).:]\s*(.+)$/) || line.match(/^[-–]\s*(.+)$/);
+    if (ans) {
+      const text = (ans[2] || ans[1]).trim();
+      let clean = text.replace(/^✅\s*/, '').replace(/^\*\s*/, '').trim();
+      if (/✅|\(richtig\)|\[richtig\]|\brichtig\b/i.test(text)) {
+        correctIndex = answers.length;
+        clean = clean.replace(/✅|\(richtig\)|\[richtig\]|\brichtig\b/gi, '').trim();
+      }
+      answers.push(clean);
+    } else {
+      if (!/^(Biologie|Chemie|Physik|Mathematik|BMS)$/i.test(line)) qTextParts.push(line);
     }
+  }
 
-    function checkAnswer(questionIndex, answerIndex, btn, card) {
-      const q = questions[questionIndex];
-      if (answered.has(questionIndex)) return;
+  let qText = qTextParts.join('\n').replace(/^\d+[.)]\s*/, '').replace(/^Frage\s*\d+[:.)]?\s*/i, '').trim();
+  if (!qText || answers.length < 2) return null;
+  if (correctIndex === null || correctIndex < 0 || correctIndex >= answers.length) correctIndex = 0;
 
-      const correct = q.c.includes(answerIndex);
-      answered.set(questionIndex, correct);
+  return { year, subject, text: qText, answers, correctIndex, explanation };
+}
 
-      const buttons = card.querySelectorAll('.answer');
-      buttons.forEach((b, i) => {
-        b.classList.add('disabled');
-        if (q.c.includes(i)) b.classList.add('correct');
-      });
-      if (!correct) btn.classList.add('wrong');
+function removeDuplicateQuestions() {
+  const seen = new Set();
+  questions = questions.filter(q => {
+    const key = (q.year + q.subject + q.text).toLowerCase().replace(/\s+/g, ' ').slice(0, 250);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
-      const feedback = document.getElementById(`feedback-${questionIndex}`);
-      feedback.textContent = correct ? '✅ Richtig!' : '❌ Falsch. Die grün markierte Antwort ist richtig.';
-      feedback.style.color = correct ? 'var(--right)' : 'var(--wrong)';
+function renderQuiz() {
+  const area = document.getElementById('quizArea');
+  const year = document.getElementById('yearFilter').value;
+  const subject = document.getElementById('subjectFilter').value;
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
 
-      updateScore();
-    }
+  const filtered = questions.filter(q =>
+    (year === 'all' || q.year === year) &&
+    (subject === 'all' || q.subject === subject) &&
+    (!search || (q.text + ' ' + q.answers.join(' ')).toLowerCase().includes(search))
+  );
 
-    function restoreCard(questionIndex, card) {
-      const q = questions[questionIndex];
-      const buttons = card.querySelectorAll('.answer');
-      buttons.forEach((b, i) => {
-        b.classList.add('disabled');
-        if (q.c.includes(i)) b.classList.add('correct');
-      });
-      const correct = answered.get(questionIndex);
-      const feedback = document.getElementById(`feedback-${questionIndex}`);
-      feedback.textContent = correct ? '✅ Richtig!' : '❌ Falsch. Die grün markierte Antwort ist richtig.';
-      feedback.style.color = correct ? 'var(--right)' : 'var(--wrong)';
-    }
+  document.getElementById('totalCount').textContent = filtered.length;
+  updateStats();
 
-    function updateScore() {
-      const list = currentQuestions();
-      let done = 0;
-      let right = 0;
-      list.forEach(q => {
-        const idx = questions.indexOf(q);
-        if (answered.has(idx)) {
-          done++;
-          if (answered.get(idx)) right++;
-        }
-      });
-      document.getElementById('scoreBox').textContent = `Punkte: ${right} / ${done} beantwortet · Insgesamt ${list.length} Fragen`;
-    }
+  if (!filtered.length) {
+    area.innerHTML = `<section class="card"><p>Keine Fragen gefunden. Lade Quellen oder importiere Text manuell.</p></section>`;
+    return;
+  }
 
-    function resetQuiz() {
-      answered.clear();
-      renderQuiz();
-    }
+  area.innerHTML = filtered.map((q, idx) => {
+    const globalIndex = questions.indexOf(q);
+    return `<div class="question" data-index="${globalIndex}">
+      <div class="q-head">
+        <span class="badge">${escapeHtml(q.year)}</span>
+        <span class="badge">${escapeHtml(q.subject)}</span>
+        <span class="badge">Frage ${idx + 1}</span>
+      </div>
+      <div class="q-text">${escapeHtml(q.text)}</div>
+      ${q.answers.map((a, ai) => `<button class="answer" onclick="chooseAnswer(${globalIndex}, ${ai}, this)">${String.fromCharCode(65+ai)}) ${escapeHtml(a)}</button>`).join('')}
+      <div class="feedback" id="fb-${globalIndex}"></div>
+    </div>`;
+  }).join('');
+}
 
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-    }
+function chooseAnswer(qIndex, aIndex, btn) {
+  const q = questions[qIndex];
+  if (answered.has(qIndex)) return;
+  answered.set(qIndex, aIndex);
+  const isCorrect = aIndex === q.correctIndex;
+  correct.set(qIndex, isCorrect);
 
-    renderQuiz();
-  </script>
+  const box = btn.closest('.question');
+  const buttons = box.querySelectorAll('.answer');
+  buttons.forEach((b, i) => {
+    if (i === q.correctIndex) b.classList.add('correct');
+    if (i === aIndex && !isCorrect) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qIndex);
+  fb.className = 'feedback ' + (isCorrect ? 'ok' : 'no');
+  fb.textContent = isCorrect ? 'Richtig ✅ ' + (q.explanation || '') : 'Falsch ❌ Richtige Antwort: ' + String.fromCharCode(65 + q.correctIndex) + ') ' + q.answers[q.correctIndex] + '. ' + (q.explanation || '');
+  updateStats();
+}
+
+function updateStats() {
+  const answeredCount = answered.size;
+  const correctCount = [...correct.values()].filter(Boolean).length;
+  document.getElementById('answeredCount').textContent = answeredCount;
+  document.getElementById('correctCount').textContent = correctCount;
+  document.getElementById('scorePercent').textContent = answeredCount ? Math.round(correctCount / answeredCount * 100) + '%' : '0%';
+}
+
+function shuffleQuestions() {
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+  answered.clear();
+  correct.clear();
+  renderQuiz();
+}
+
+function resetQuiz() {
+  answered.clear();
+  correct.clear();
+  renderQuiz();
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+setup();
+</script>
 </body>
 </html>
