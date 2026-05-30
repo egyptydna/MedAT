@@ -1,8 +1,8 @@
 <style>
-:root {
-  --bg:#f6f7fb; --card:#fff; --text:#172033; --muted:#667085; --line:#d8dee9;
-  --primary:#2563eb; --primary-dark:#1d4ed8; --good:#16a34a; --bad:#dc2626;
-  --shadow:0 10px 25px rgba(15,23,42,.08);
+:root{
+  --bg:#f6f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#d8dee9;
+  --primary:#2563eb;--primary-dark:#1d4ed8;--good:#16a34a;--bad:#dc2626;
+  --shadow:0 10px 25px rgba(15,23,42,.08)
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
@@ -10,20 +10,23 @@ body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",
 .medat-card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;margin:14px 0}
 .medat-title{font-size:clamp(24px,4vw,38px);margin:0 0 8px;font-weight:850}
 .medat-sub{color:var(--muted);margin:0 0 16px}
-.controls{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px;align-items:end}
+.controls{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px;align-items:end}
 label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:700}
 select,input{width:100%;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;font:inherit;color:var(--text)}
 button{border:0;border-radius:14px;padding:12px 15px;font:inherit;font-weight:800;cursor:pointer;background:var(--primary);color:#fff}
 button:hover{background:var(--primary-dark)}
 button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
-button.secondary:hover{background:#f8fafc}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .tab{background:#fff;color:#172033;border:1px solid var(--line);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:800}
 .tab.active{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px}
 .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}
 .stat span{color:var(--muted);display:block}
 .stat strong{font-size:22px}
+.timerbox{background:#0f172a;color:white;border-radius:18px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.timerbig{font-size:30px;font-weight:900;letter-spacing:.5px}
+.timerbox.warning{background:#9a3412}
+.timerbox.danger{background:#991b1b}
 .question{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin:16px 0}
 .qtop{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
 .badge{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:#f8fafc;color:#667085;padding:5px 10px;font-size:13px;font-weight:700}
@@ -41,26 +44,29 @@ button.secondary:hover{background:#f8fafc}
 .feedback.good{background:#dcfce7;color:#166534}
 .feedback.bad{background:#fee2e2;color:#991b1b}
 .feedback.neutral{background:#f1f5f9;color:#334155}
-.markbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.feedback.warn{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.markbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
 .small{padding:9px 11px;border-radius:12px;font-size:13px}
 .known{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .unknown{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.answerSet{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:14px;margin-top:10px}
+.answerSet span{font-weight:800;color:#9a3412}
+.answerSet button{padding:7px 10px;border-radius:10px;background:white;color:#9a3412;border:1px solid #fed7aa}
 .notice{padding:12px 14px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-top:12px;font-weight:700}
 .hidden{display:none!important}
-@media(max-width:850px){.controls{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.qtop{flex-direction:column}}
+@media(max-width:950px){.controls{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.qtop{flex-direction:column}.timerbox{flex-direction:column;align-items:flex-start}}
 </style>
 
 <div class="medat-app">
   <div class="medat-card">
     <h1 class="medat-title">MedAT BMS Altfragen Quiz</h1>
-    <p class="medat-sub">Simulationen nach Jahr und Fach: Biologie, Chemie, Physik, Mathe. Start ist jetzt automatisch 2019.</p>
+    <p class="medat-sub">Simulationen getrennt nach Fach: Biologie, Chemie, Physik oder Mathe. Keine „Alle“-Option.</p>
 
     <div class="controls">
       <div><label>Jahr</label><select id="year"></select></div>
       <div>
         <label>Fach</label>
         <select id="subject">
-          <option value="ALL">Alle BMS-Fächer</option>
           <option value="Biologie">Biologie</option>
           <option value="Chemie">Chemie</option>
           <option value="Physik">Physik</option>
@@ -74,14 +80,30 @@ button.secondary:hover{background:#f8fafc}
           <option value="random">Zufällig gemischt</option>
         </select>
       </div>
+      <div>
+        <label>Timer</label>
+        <select id="timerMode">
+          <option value="on">Mit Timer</option>
+          <option value="off">Ohne Timer</option>
+        </select>
+      </div>
       <div><label>Suche</label><input id="search" placeholder="Begriff suchen..."></div>
     </div>
 
     <div class="tabs">
       <button id="start">Simulation starten</button>
+      <button class="secondary" id="pauseTimer">Timer pausieren</button>
       <button class="secondary" id="resetSelection">Auswahl zurücksetzen</button>
       <button class="secondary" id="resetProgress">Fortschritt löschen</button>
       <button class="secondary" id="exportProgress">Fortschritt exportieren</button>
+    </div>
+
+    <div id="timerBox" class="timerbox">
+      <div>
+        <strong>Timer</strong>
+        <div id="timerInfo">Biologie: 30 Minuten</div>
+      </div>
+      <div class="timerbig" id="timerDisplay">30:00</div>
     </div>
 
     <div class="stats">
@@ -90,6 +112,7 @@ button.secondary:hover{background:#f8fafc}
       <div class="stat"><span>Richtig</span><strong id="sRight">0</strong></div>
       <div class="stat"><span>Falsch</span><strong id="sWrong">0</strong></div>
       <div class="stat"><span>Ohne Lösung</span><strong id="sNoKey">0</strong></div>
+      <div class="stat"><span>Lösungen lokal</span><strong id="sCustom">0</strong></div>
     </div>
 
     <div id="tabs" class="tabs"></div>
@@ -106,34 +129,42 @@ button.secondary:hover{background:#f8fafc}
 <script>
 const DATA = JSON.parse(document.getElementById("medat-data").textContent);
 const SUMMARY = {"2019": {"Biologie": 41, "Chemie": 24, "Physik": 18, "Mathe": 12}, "2020": {"Biologie": 40, "Chemie": 24, "Physik": 18, "Mathe": 11}, "2021": {"Biologie": 40, "Chemie": 24, "Physik": 18, "Mathe": 12}, "2022": {"Biologie": 40, "Chemie": 23, "Physik": 18, "Mathe": 12}, "2023": {"Biologie": 40, "Chemie": 24, "Physik": 19, "Mathe": 12}, "2024": {"Biologie": 40, "Chemie": 23, "Physik": 20, "Mathe": 10}, "2025": {"Biologie": 40, "Chemie": 25, "Physik": 18, "Mathe": 12}, "2026": {"Biologie": 0, "Chemie": 0, "Physik": 0, "Mathe": 0}};
-const ANSWER_KEY = {"2019-Biologie-1": "E", "2019-Biologie-3": "B", "2019-Biologie-4": "A", "2019-Biologie-5": "B", "2019-Biologie-6": "A", "2019-Biologie-7": "B", "2019-Biologie-9": "E", "2020-Biologie-1": "A", "2020-Biologie-2": "A", "2020-Biologie-3": "A", "2020-Biologie-4": "A", "2020-Biologie-5": "C", "2020-Biologie-8": "A", "2020-Biologie-9": "A", "2022-Biologie-1": "A", "2022-Biologie-2": "A", "2022-Biologie-3": "A", "2022-Biologie-5": "B", "2022-Biologie-8": "A", "2022-Biologie-9": "A", "2022-Biologie-11": "C", "2022-Biologie-14": "B", "2022-Biologie-21": "A", "2023-Biologie-1": "A", "2023-Biologie-2": "B", "2023-Biologie-3": "A", "2023-Biologie-4": "B", "2023-Biologie-5": "A", "2024-Biologie-1": "C", "2024-Biologie-6": "B", "2024-Biologie-10": "A", "2024-Biologie-11": "A", "2024-Biologie-12": "C", "2025-Biologie-1": "A", "2025-Biologie-2": "B", "2025-Biologie-3": "A", "2025-Biologie-4": "A", "2025-Biologie-5": "A", "2025-Biologie-6": "A", "2025-Biologie-7": "B", "2025-Biologie-8": "B", "2025-Biologie-9": "A", "2025-Biologie-10": "A", "2025-Biologie-16": "A", "2025-Biologie-17": "A", "2025-Biologie-21": "D", "2025-Biologie-25": "A"};
+const BUILTIN_ANSWER_KEY = {"2019-Biologie-1": "E", "2019-Biologie-2": "A", "2019-Biologie-3": "B", "2019-Biologie-4": "A", "2019-Biologie-5": "B", "2019-Biologie-6": "A", "2019-Biologie-7": "B", "2019-Biologie-9": "E", "2019-Biologie-12": "B", "2019-Biologie-20": "B", "2020-Biologie-1": "A", "2020-Biologie-2": "A", "2020-Biologie-3": "A", "2020-Biologie-4": "A", "2020-Biologie-5": "C", "2020-Biologie-8": "A", "2020-Biologie-9": "A", "2020-Biologie-16": "A", "2020-Biologie-27": "B", "2022-Biologie-1": "A", "2022-Biologie-2": "A", "2022-Biologie-3": "A", "2022-Biologie-5": "B", "2022-Biologie-8": "A", "2022-Biologie-9": "A", "2022-Biologie-11": "C", "2022-Biologie-14": "B", "2022-Biologie-21": "A", "2023-Biologie-1": "A", "2023-Biologie-2": "B", "2023-Biologie-3": "A", "2023-Biologie-4": "B", "2023-Biologie-5": "A", "2024-Biologie-1": "C", "2024-Biologie-6": "B", "2024-Biologie-10": "A", "2024-Biologie-11": "A", "2024-Biologie-12": "C", "2025-Biologie-1": "A", "2025-Biologie-2": "B", "2025-Biologie-3": "A", "2025-Biologie-4": "A", "2025-Biologie-5": "A", "2025-Biologie-6": "A", "2025-Biologie-7": "B", "2025-Biologie-8": "B", "2025-Biologie-9": "A", "2025-Biologie-10": "A", "2025-Biologie-16": "A", "2025-Biologie-17": "A", "2025-Biologie-21": "D", "2025-Biologie-25": "A"};
 const SUBJECTS = ["Biologie","Chemie","Physik","Mathe"];
+const SUBJECT_TIMES = {Biologie:30, Chemie:18, Physik:16, Mathe:11};
 let current = [];
 let state = loadState();
+let customAnswers = loadCustomAnswers();
+let timerSeconds = 30 * 60;
+let timerInterval = null;
+let timerPaused = false;
 let searchTimer = null;
 
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 function key(q){return `${q.year}-${q.subject}-${q.num}`}
-function loadState(){try{return JSON.parse(localStorage.getItem("medat_bms_state_v3")||"{}")}catch(e){return{}}}
-function saveState(){localStorage.setItem("medat_bms_state_v3",JSON.stringify(state))}
+function getCorrect(k){return customAnswers[k] || BUILTIN_ANSWER_KEY[k] || null}
+function loadState(){try{return JSON.parse(localStorage.getItem("medat_bms_state_v5")||"{}")}catch(e){return{}}}
+function saveState(){localStorage.setItem("medat_bms_state_v5",JSON.stringify(state))}
+function loadCustomAnswers(){try{return JSON.parse(localStorage.getItem("medat_bms_custom_answers_v2")||"{}")}catch(e){return{}}}
+function saveCustomAnswers(){localStorage.setItem("medat_bms_custom_answers_v2",JSON.stringify(customAnswers))}
 
 function initYears(){
   const y=$("year"); y.innerHTML="";
   Object.keys(DATA).sort().forEach(year=>{
     const total=SUBJECTS.reduce((a,s)=>a+((DATA[year]&&DATA[year][s])?DATA[year][s].length:0),0);
     const o=document.createElement("option");
-    o.value=year; o.textContent=total?`${year} (${total} Fragen)`:`${year} (leer)`;
+    o.value=year; o.textContent=total?`${year} (${total} BMS-Fragen)`:`${year} (leer)`;
     y.appendChild(o);
   });
   y.value = DATA["2019"] ? "2019" : Object.keys(DATA).sort()[0];
+  $("subject").value = "Biologie";
 }
 
 function renderTabs(){
   const t=$("tabs"); t.innerHTML="";
   const year=$("year").value, active=$("subject").value;
-  const total=SUBJECTS.reduce((a,s)=>a+((DATA[year]&&DATA[year][s])?DATA[year][s].length:0),0);
-  [["ALL",`Alle BMS (${total})`],...SUBJECTS.map(s=>[s,`${s} (${(DATA[year]&&DATA[year][s])?DATA[year][s].length:0})`])].forEach(([val,label])=>{
+  SUBJECTS.map(s=>[s,`${s} (${(DATA[year]&&DATA[year][s])?DATA[year][s].length:0})`]).forEach(([val,label])=>{
     const b=document.createElement("button");
     b.className="tab"+(active===val?" active":"");
     b.textContent=label;
@@ -145,9 +176,7 @@ function renderTabs(){
 function collect(){
   const year=$("year").value, subj=$("subject").value, term=$("search").value.trim().toLowerCase();
   let arr=[];
-  (subj==="ALL"?SUBJECTS:[subj]).forEach(s=>{
-    ((DATA[year]&&DATA[year][s])||[]).forEach(q=>arr.push({...q,year,subject:s}));
-  });
+  ((DATA[year]&&DATA[year][subj])||[]).forEach(q=>arr.push({...q,year,subject:subj}));
   if(term){
     arr=arr.filter(q=>[q.text,...(q.options||[]).map(o=>o.text)].join(" ").toLowerCase().includes(term));
   }
@@ -155,6 +184,10 @@ function collect(){
     arr=arr.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
   }
   return arr;
+}
+
+function getSelectedMinutes(){
+  return SUBJECT_TIMES[$("subject").value] || 0;
 }
 
 function start(){
@@ -165,13 +198,48 @@ function start(){
     n.classList.remove("hidden");
     n.textContent=$("year").value==="2026"?"2026 ist leer, weil die PDF nur Platzhalter enthält.":"Keine Fragen für diese Auswahl gefunden.";
   } else n.classList.add("hidden");
+
+  timerSeconds = getSelectedMinutes() * 60;
+  timerPaused = false;
+  $("pauseTimer").textContent = "Timer pausieren";
+  updateTimerDisplay();
+  if($("timerMode").value==="on") startTimer(); else stopTimer();
+
   renderQuiz(); updateStats();
+}
+
+function startTimer(){
+  stopTimer();
+  if(timerSeconds <= 0) return;
+  timerInterval = setInterval(()=>{
+    if(timerPaused) return;
+    timerSeconds--;
+    updateTimerDisplay();
+    if(timerSeconds <= 0){
+      stopTimer();
+      alert("Zeit abgelaufen!");
+    }
+  },1000);
+}
+
+function stopTimer(){
+  if(timerInterval){clearInterval(timerInterval); timerInterval=null;}
+}
+
+function updateTimerDisplay(){
+  const m=Math.floor(timerSeconds/60), s=timerSeconds%60;
+  $("timerDisplay").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  const subj=$("subject").value;
+  $("timerInfo").textContent=`${subj}: ${getSelectedMinutes()} Minuten`;
+  $("timerBox").className="timerbox";
+  if(timerSeconds <= 5*60 && timerSeconds > 60) $("timerBox").className="timerbox warning";
+  if(timerSeconds <= 60) $("timerBox").className="timerbox danger";
 }
 
 function renderQuiz(){
   const root=$("quiz"); root.innerHTML="";
   current.forEach((q,i)=>{
-    const k=key(q), st=state[k]||{}, correct=ANSWER_KEY[k]||null;
+    const k=key(q), st=state[k]||{}, correct=getCorrect(k);
     const selected=st.selected||null;
     const card=document.createElement("div");
     card.className="question";
@@ -183,10 +251,12 @@ function renderQuiz(){
       <p class="qtext">${esc(q.text)}</p>
       <div class="options"></div>
       <div class="feedback neutral">${feedbackText(selected,correct)}</div>
+      ${!correct ? answerSetterHtml(k) : ""}
       <div class="markbar">
         <button class="small known" data-mark="known">Gewusst</button>
         <button class="small unknown" data-mark="unknown">Nicht gewusst</button>
         <button class="small secondary" data-clear="1">Diese Frage löschen</button>
+        ${correct ? `<button class="small secondary" data-edit-answer="1">Lösung ändern</button>` : ""}
       </div>`;
     const opts=card.querySelector(".options");
     (q.options||[]).forEach(o=>{
@@ -203,19 +273,53 @@ function renderQuiz(){
     const fb=card.querySelector(".feedback");
     if(selected && correct && selected===correct) fb.className="feedback good";
     else if(selected && correct && selected!==correct) fb.className="feedback bad";
+    else if(selected && !correct) fb.className="feedback warn";
     else fb.className="feedback neutral";
+
     card.querySelector('[data-mark="known"]').onclick=()=>mark(q,"known");
     card.querySelector('[data-mark="unknown"]').onclick=()=>mark(q,"unknown");
     card.querySelector('[data-clear="1"]').onclick=()=>{delete state[k]; saveState(); renderQuiz(); updateStats()};
+
+    const edit=card.querySelector('[data-edit-answer="1"]');
+    if(edit) edit.onclick=()=>showAnswerEdit(k);
+
+    card.querySelectorAll("[data-set-answer]").forEach(btn=>{
+      btn.onclick=()=>setCorrectAnswer(k,btn.getAttribute("data-set-answer"));
+    });
+
     root.appendChild(card);
   });
 }
 
+function answerSetterHtml(k){
+  return `<div class="answerSet">
+    <span>Lösung fehlt. Richtige Antwort eintragen:</span>
+    ${["A","B","C","D","E","F"].map(l=>`<button data-set-answer="${l}">${l}</button>`).join("")}
+  </div>`;
+}
+
 function feedbackText(selected,correct){
   if(!selected) return "Noch nicht beantwortet";
-  if(!correct) return `Du hast ${selected} gewählt. Für diese Frage ist die Lösung noch nicht eingetragen.`;
+  if(!correct) return `Du hast ${selected} gewählt. Lösung fehlt noch. Trag unten A/B/C/D/E ein, dann zeigt es sofort richtig/falsch.`;
   if(selected===correct) return `Richtig ✅ Lösung: ${correct}`;
   return `Falsch ❌ Deine Antwort: ${selected}. Richtige Antwort: ${correct}`;
+}
+
+function setCorrectAnswer(k,letter){
+  customAnswers[k]=letter;
+  saveCustomAnswers();
+  renderQuiz(); updateStats();
+}
+
+function showAnswerEdit(k){
+  const old=getCorrect(k)||"";
+  const val=prompt("Richtige Lösung eintragen: A, B, C, D, E oder F", old);
+  if(!val) return;
+  const clean=val.trim().toUpperCase();
+  if(!["A","B","C","D","E","F"].includes(clean)){alert("Bitte nur A, B, C, D, E oder F eingeben.");return;}
+  customAnswers[k]=clean;
+  saveCustomAnswers();
+  renderQuiz(); updateStats();
 }
 
 function selectAnswer(q,label){
@@ -232,7 +336,7 @@ function mark(q,m){
 function updateStats(){
   let answered=0,right=0,wrong=0,nokey=0;
   current.forEach(q=>{
-    const k=key(q), st=state[k]||{}, c=ANSWER_KEY[k]||null;
+    const k=key(q), st=state[k]||{}, c=getCorrect(k);
     if(st.selected){
       answered++;
       if(!c) nokey++;
@@ -245,27 +349,30 @@ function updateStats(){
   $("sRight").textContent=right;
   $("sWrong").textContent=wrong;
   $("sNoKey").textContent=nokey;
+  $("sCustom").textContent=Object.keys(customAnswers).length;
 }
 
 function resetSelection(){
-  $("year").value="2019"; $("subject").value="ALL"; $("mode").value="normal"; $("search").value="";
+  $("year").value="2019"; $("subject").value="Biologie"; $("mode").value="normal"; $("timerMode").value="on"; $("search").value="";
   start();
 }
 function resetProgress(){
-  if(confirm("Wirklich gesamten lokalen Fortschritt löschen?")){
-    state={}; saveState(); start();
+  if(confirm("Wirklich gesamten lokalen Fortschritt und lokale Lösungen löschen?")){
+    state={}; customAnswers={}; saveState(); saveCustomAnswers(); start();
   }
 }
 function exportProgress(){
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const out={state, customAnswers};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob); a.download="medat_bms_fortschritt.json"; a.click();
+  a.href=URL.createObjectURL(blob); a.download="medat_bms_fortschritt_und_loesungen.json"; a.click();
   URL.revokeObjectURL(a.href);
 }
 
 window.addEventListener("DOMContentLoaded",()=>{
   initYears(); start();
-  $("year").onchange=start; $("subject").onchange=start; $("mode").onchange=start; $("start").onclick=start;
+  $("year").onchange=start; $("subject").onchange=start; $("mode").onchange=start; $("timerMode").onchange=start; $("start").onclick=start;
+  $("pauseTimer").onclick=()=>{timerPaused=!timerPaused; $("pauseTimer").textContent=timerPaused?"Timer fortsetzen":"Timer pausieren"};
   $("resetSelection").onclick=resetSelection; $("resetProgress").onclick=resetProgress; $("exportProgress").onclick=exportProgress;
   $("search").oninput=()=>{clearTimeout(searchTimer); searchTimer=setTimeout(start,200)};
 });
