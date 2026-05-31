@@ -30,6 +30,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 .question{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin:16px 0}
 .qtop{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
 .badge{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:#f8fafc;color:#667085;padding:5px 10px;font-size:13px;font-weight:700}
+.badge.multi{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
 .qtext{font-size:18px;font-weight:850;margin:0 0 13px;white-space:pre-wrap}
 .options{display:grid;gap:8px}
 .option{width:100%;text-align:left;background:#fff;color:var(--text);border:1px solid var(--line);padding:13px;border-radius:14px;font-weight:650;display:flex;gap:12px;align-items:flex-start}
@@ -60,7 +61,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 <div class="medat-app">
   <div class="medat-card">
     <h1 class="medat-title">MedAT BMS Altfragen Quiz</h1>
-    <p class="medat-sub">Simulationen getrennt nach Fach: Biologie, Chemie, Physik oder Mathe. Keine „Alle“-Option.</p>
+    <p class="medat-sub">Simulationen getrennt nach Fach. Mehrfachantworten sind jetzt möglich.</p>
 
     <div class="controls">
       <div><label>Jahr</label><select id="year"></select></div>
@@ -129,7 +130,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 <script>
 const DATA = JSON.parse(document.getElementById("medat-data").textContent);
 const SUMMARY = {"2019": {"Biologie": 41, "Chemie": 24, "Physik": 18, "Mathe": 12}, "2020": {"Biologie": 40, "Chemie": 24, "Physik": 18, "Mathe": 11}, "2021": {"Biologie": 40, "Chemie": 24, "Physik": 18, "Mathe": 12}, "2022": {"Biologie": 40, "Chemie": 23, "Physik": 18, "Mathe": 12}, "2023": {"Biologie": 40, "Chemie": 24, "Physik": 19, "Mathe": 12}, "2024": {"Biologie": 40, "Chemie": 23, "Physik": 20, "Mathe": 10}, "2025": {"Biologie": 40, "Chemie": 25, "Physik": 18, "Mathe": 12}, "2026": {"Biologie": 0, "Chemie": 0, "Physik": 0, "Mathe": 0}};
-const BUILTIN_ANSWER_KEY = {"2019-Biologie-1": "E", "2019-Biologie-2": "A", "2019-Biologie-3": "B", "2019-Biologie-4": "A", "2019-Biologie-5": "B", "2019-Biologie-6": "A", "2019-Biologie-7": "B", "2019-Biologie-9": "E", "2019-Biologie-12": "B", "2019-Biologie-20": "B", "2020-Biologie-1": "A", "2020-Biologie-2": "A", "2020-Biologie-3": "A", "2020-Biologie-4": "A", "2020-Biologie-5": "C", "2020-Biologie-8": "A", "2020-Biologie-9": "A", "2020-Biologie-16": "A", "2020-Biologie-27": "B", "2022-Biologie-1": "A", "2022-Biologie-2": "A", "2022-Biologie-3": "A", "2022-Biologie-5": "B", "2022-Biologie-8": "A", "2022-Biologie-9": "A", "2022-Biologie-11": "C", "2022-Biologie-14": "B", "2022-Biologie-21": "A", "2023-Biologie-1": "A", "2023-Biologie-2": "B", "2023-Biologie-3": "A", "2023-Biologie-4": "B", "2023-Biologie-5": "A", "2024-Biologie-1": "C", "2024-Biologie-6": "B", "2024-Biologie-10": "A", "2024-Biologie-11": "A", "2024-Biologie-12": "C", "2025-Biologie-1": "A", "2025-Biologie-2": "B", "2025-Biologie-3": "A", "2025-Biologie-4": "A", "2025-Biologie-5": "A", "2025-Biologie-6": "A", "2025-Biologie-7": "B", "2025-Biologie-8": "B", "2025-Biologie-9": "A", "2025-Biologie-10": "A", "2025-Biologie-16": "A", "2025-Biologie-17": "A", "2025-Biologie-21": "D", "2025-Biologie-25": "A"};
+const BUILTIN_ANSWER_KEY = {"2019-Biologie-1": ["E"], "2019-Biologie-2": ["A"], "2019-Biologie-3": ["B"], "2019-Biologie-4": ["A"], "2019-Biologie-5": ["B"], "2019-Biologie-6": ["A"], "2019-Biologie-7": ["B"], "2019-Biologie-9": ["E"], "2019-Biologie-12": ["B"], "2019-Biologie-20": ["B"], "2019-Chemie-1": ["B", "C"], "2020-Biologie-1": ["A"], "2020-Biologie-2": ["A"], "2020-Biologie-3": ["A"], "2020-Biologie-4": ["A"], "2020-Biologie-5": ["C"], "2020-Biologie-8": ["A"], "2020-Biologie-9": ["A"], "2020-Biologie-16": ["A"], "2020-Biologie-27": ["B"], "2022-Biologie-1": ["A"], "2022-Biologie-2": ["A"], "2022-Biologie-3": ["A"], "2022-Biologie-5": ["B"], "2022-Biologie-8": ["A"], "2022-Biologie-9": ["A"], "2022-Biologie-11": ["C"], "2022-Biologie-14": ["B"], "2022-Biologie-21": ["A"], "2023-Biologie-1": ["A"], "2023-Biologie-2": ["B"], "2023-Biologie-3": ["A"], "2023-Biologie-4": ["B"], "2023-Biologie-5": ["A"], "2024-Biologie-1": ["C"], "2024-Biologie-6": ["B"], "2024-Biologie-10": ["A"], "2024-Biologie-11": ["A"], "2024-Biologie-12": ["C"], "2025-Biologie-1": ["A"], "2025-Biologie-2": ["B"], "2025-Biologie-3": ["A"], "2025-Biologie-4": ["A"], "2025-Biologie-5": ["A"], "2025-Biologie-6": ["A"], "2025-Biologie-7": ["B"], "2025-Biologie-8": ["B"], "2025-Biologie-9": ["A"], "2025-Biologie-10": ["A"], "2025-Biologie-16": ["A"], "2025-Biologie-17": ["A"], "2025-Biologie-21": ["D"], "2025-Biologie-25": ["A"]};
 const SUBJECTS = ["Biologie","Chemie","Physik","Mathe"];
 const SUBJECT_TIMES = {Biologie:30, Chemie:18, Physik:16, Mathe:11};
 let current = [];
@@ -143,11 +144,21 @@ let searchTimer = null;
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 function key(q){return `${q.year}-${q.subject}-${q.num}`}
-function getCorrect(k){return customAnswers[k] || BUILTIN_ANSWER_KEY[k] || null}
-function loadState(){try{return JSON.parse(localStorage.getItem("medat_bms_state_v5")||"{}")}catch(e){return{}}}
-function saveState(){localStorage.setItem("medat_bms_state_v5",JSON.stringify(state))}
-function loadCustomAnswers(){try{return JSON.parse(localStorage.getItem("medat_bms_custom_answers_v2")||"{}")}catch(e){return{}}}
-function saveCustomAnswers(){localStorage.setItem("medat_bms_custom_answers_v2",JSON.stringify(customAnswers))}
+
+function normalizeAnswer(v){
+  if(!v) return null;
+  if(Array.isArray(v)) return [...new Set(v.map(x=>String(x).trim().toUpperCase()).filter(Boolean))].sort();
+  return [...new Set(String(v).split(/[,\s]+/).map(x=>x.trim().toUpperCase()).filter(Boolean))].sort();
+}
+function getCorrect(k){return normalizeAnswer(customAnswers[k] || BUILTIN_ANSWER_KEY[k])}
+function sameSet(a,b){
+  a=normalizeAnswer(a)||[]; b=normalizeAnswer(b)||[];
+  return a.length===b.length && a.every((x,i)=>x===b[i]);
+}
+function loadState(){try{return JSON.parse(localStorage.getItem("medat_bms_state_v6")||"{}")}catch(e){return{}}}
+function saveState(){localStorage.setItem("medat_bms_state_v6",JSON.stringify(state))}
+function loadCustomAnswers(){try{return JSON.parse(localStorage.getItem("medat_bms_custom_answers_v3")||"{}")}catch(e){return{}}}
+function saveCustomAnswers(){localStorage.setItem("medat_bms_custom_answers_v3",JSON.stringify(customAnswers))}
 
 function initYears(){
   const y=$("year"); y.innerHTML="";
@@ -240,7 +251,8 @@ function renderQuiz(){
   const root=$("quiz"); root.innerHTML="";
   current.forEach((q,i)=>{
     const k=key(q), st=state[k]||{}, correct=getCorrect(k);
-    const selected=st.selected||null;
+    const selected=normalizeAnswer(st.selected)||[];
+    const isMulti = (correct && correct.length > 1) || selected.length > 1;
     const card=document.createElement("div");
     card.className="question";
     card.innerHTML=`
@@ -248,6 +260,7 @@ function renderQuiz(){
         <span class="badge">${esc(q.year)} - ${esc(q.subject)} - Frage ${esc(q.num)}</span>
         <span class="badge">${i+1} / ${current.length}</span>
       </div>
+      ${isMulti ? `<div class="badge multi">Mehrfachauswahl: mehrere Antworten möglich</div>` : ""}
       <p class="qtext">${esc(q.text)}</p>
       <div class="options"></div>
       <div class="feedback neutral">${feedbackText(selected,correct)}</div>
@@ -262,18 +275,20 @@ function renderQuiz(){
     (q.options||[]).forEach(o=>{
       const b=document.createElement("button");
       let cls="option";
-      if(selected===o.label) cls+=" selected";
-      if(selected && correct && o.label===correct) cls+=" correct";
-      if(selected && correct && selected===o.label && selected!==correct) cls+=" wrong";
+      const picked = selected.includes(o.label);
+      const isCorrectOption = correct && correct.includes(o.label);
+      if(picked) cls+=" selected";
+      if(selected.length && correct && isCorrectOption) cls+=" correct";
+      if(selected.length && correct && picked && !isCorrectOption) cls+=" wrong";
       b.className=cls;
       b.innerHTML=`<span class="letter">${esc(o.label)}</span><span>${esc(o.text)}</span>`;
-      b.onclick=()=>selectAnswer(q,o.label);
+      b.onclick=()=>toggleAnswer(q,o.label);
       opts.appendChild(b);
     });
     const fb=card.querySelector(".feedback");
-    if(selected && correct && selected===correct) fb.className="feedback good";
-    else if(selected && correct && selected!==correct) fb.className="feedback bad";
-    else if(selected && !correct) fb.className="feedback warn";
+    if(selected.length && correct && sameSet(selected, correct)) fb.className="feedback good";
+    else if(selected.length && correct && !sameSet(selected, correct)) fb.className="feedback bad";
+    else if(selected.length && !correct) fb.className="feedback warn";
     else fb.className="feedback neutral";
 
     card.querySelector('[data-mark="known"]').onclick=()=>mark(q,"known");
@@ -284,7 +299,7 @@ function renderQuiz(){
     if(edit) edit.onclick=()=>showAnswerEdit(k);
 
     card.querySelectorAll("[data-set-answer]").forEach(btn=>{
-      btn.onclick=()=>setCorrectAnswer(k,btn.getAttribute("data-set-answer"));
+      btn.onclick=()=>toggleCorrectAnswer(k,btn.getAttribute("data-set-answer"));
     });
 
     root.appendChild(card);
@@ -293,40 +308,63 @@ function renderQuiz(){
 
 function answerSetterHtml(k){
   return `<div class="answerSet">
-    <span>Lösung fehlt. Richtige Antwort eintragen:</span>
+    <span>Lösung fehlt. Eine oder mehrere richtige Antworten anklicken:</span>
     ${["A","B","C","D","E","F"].map(l=>`<button data-set-answer="${l}">${l}</button>`).join("")}
+    <button data-set-answer="DONE">Fertig</button>
   </div>`;
 }
 
 function feedbackText(selected,correct){
-  if(!selected) return "Noch nicht beantwortet";
-  if(!correct) return `Du hast ${selected} gewählt. Lösung fehlt noch. Trag unten A/B/C/D/E ein, dann zeigt es sofort richtig/falsch.`;
-  if(selected===correct) return `Richtig ✅ Lösung: ${correct}`;
-  return `Falsch ❌ Deine Antwort: ${selected}. Richtige Antwort: ${correct}`;
+  if(!selected.length) return "Noch nicht beantwortet";
+  const s = selected.join(", ");
+  if(!correct) return `Du hast ${s} gewählt. Lösung fehlt noch. Trag unten die richtige(n) Antwort(en) ein.`;
+  const c = correct.join(", ");
+  if(sameSet(selected, correct)) return `Richtig ✅ Lösung: ${c}`;
+  return `Falsch ❌ Deine Antwort: ${s}. Richtige Antwort: ${c}`;
 }
 
-function setCorrectAnswer(k,letter){
-  customAnswers[k]=letter;
+function toggleCorrectAnswer(k,letter){
+  if(letter==="DONE"){renderQuiz(); updateStats(); return;}
+  let arr=normalizeAnswer(customAnswers[k]) || [];
+  if(arr.includes(letter)) arr=arr.filter(x=>x!==letter);
+  else arr.push(letter);
+  customAnswers[k]=arr.sort();
   saveCustomAnswers();
   renderQuiz(); updateStats();
 }
 
 function showAnswerEdit(k){
-  const old=getCorrect(k)||"";
-  const val=prompt("Richtige Lösung eintragen: A, B, C, D, E oder F", old);
+  const old=(getCorrect(k)||[]).join(",");
+  const val=prompt("Richtige Lösung(en) eintragen, z. B. A oder B,C", old);
   if(!val) return;
-  const clean=val.trim().toUpperCase();
-  if(!["A","B","C","D","E","F"].includes(clean)){alert("Bitte nur A, B, C, D, E oder F eingeben.");return;}
-  customAnswers[k]=clean;
+  const arr=normalizeAnswer(val);
+  if(!arr || !arr.length){return;}
+  const allowed=["A","B","C","D","E","F"];
+  if(arr.some(x=>!allowed.includes(x))){alert("Bitte nur A, B, C, D, E oder F eingeben.");return;}
+  customAnswers[k]=arr;
   saveCustomAnswers();
   renderQuiz(); updateStats();
 }
 
-function selectAnswer(q,label){
+function toggleAnswer(q,label){
   const k=key(q);
-  state[k]={...(state[k]||{}),selected:label};
+  const correct=getCorrect(k);
+  let arr=normalizeAnswer((state[k]||{}).selected)||[];
+
+  // Wenn Lösungsschlüssel mehrere Antworten hat: togglen.
+  // Wenn keine Lösung bekannt ist: auch togglen, damit man mehrere auswählen kann.
+  // Wenn nur eine Lösung bekannt ist: wie Single Choice verhalten.
+  if(correct && correct.length === 1){
+    arr=[label];
+  } else {
+    if(arr.includes(label)) arr=arr.filter(x=>x!==label);
+    else arr.push(label);
+  }
+
+  state[k]={...(state[k]||{}),selected:arr.sort()};
   saveState(); renderQuiz(); updateStats();
 }
+
 function mark(q,m){
   const k=key(q);
   state[k]={...(state[k]||{}),mark:m};
@@ -336,11 +374,11 @@ function mark(q,m){
 function updateStats(){
   let answered=0,right=0,wrong=0,nokey=0;
   current.forEach(q=>{
-    const k=key(q), st=state[k]||{}, c=getCorrect(k);
-    if(st.selected){
+    const k=key(q), st=state[k]||{}, c=getCorrect(k), selected=normalizeAnswer(st.selected)||[];
+    if(selected.length){
       answered++;
       if(!c) nokey++;
-      else if(st.selected===c) right++;
+      else if(sameSet(selected,c)) right++;
       else wrong++;
     }
   });
