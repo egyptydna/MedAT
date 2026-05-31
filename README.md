@@ -61,7 +61,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 <div class="medat-app">
   <div class="medat-card">
     <h1 class="medat-title">MedAT BMS Altfragen Quiz</h1>
-    <p class="medat-sub">Simulationen getrennt nach Fach. Mehrfachantworten sind jetzt möglich.</p>
+    <p class="medat-sub">Simulationen getrennt nach Fach. Mehrfachantworten sind möglich: zuerst auswählen, dann Antwort bestätigen.</p>
 
     <div class="controls">
       <div><label>Jahr</label><select id="year"></select></div>
@@ -252,6 +252,7 @@ function renderQuiz(){
   current.forEach((q,i)=>{
     const k=key(q), st=state[k]||{}, correct=getCorrect(k);
     const selected=normalizeAnswer(st.selected)||[];
+    const confirmed = !!st.confirmed;
     const isMulti = (correct && correct.length > 1) || selected.length > 1;
     const card=document.createElement("div");
     card.className="question";
@@ -263,9 +264,10 @@ function renderQuiz(){
       ${isMulti ? `<div class="badge multi">Mehrfachauswahl: mehrere Antworten möglich</div>` : ""}
       <p class="qtext">${esc(q.text)}</p>
       <div class="options"></div>
-      <div class="feedback neutral">${feedbackText(selected,correct)}</div>
+      <div class="feedback neutral">${feedbackText(selected,correct,confirmed)}</div>
       ${!correct ? answerSetterHtml(k) : ""}
       <div class="markbar">
+        <button class="small" data-confirm="1">Antwort bestätigen</button>
         <button class="small known" data-mark="known">Gewusst</button>
         <button class="small unknown" data-mark="unknown">Nicht gewusst</button>
         <button class="small secondary" data-clear="1">Diese Frage löschen</button>
@@ -278,19 +280,20 @@ function renderQuiz(){
       const picked = selected.includes(o.label);
       const isCorrectOption = correct && correct.includes(o.label);
       if(picked) cls+=" selected";
-      if(selected.length && correct && isCorrectOption) cls+=" correct";
-      if(selected.length && correct && picked && !isCorrectOption) cls+=" wrong";
+      if(confirmed && selected.length && correct && isCorrectOption) cls+=" correct";
+      if(confirmed && selected.length && correct && picked && !isCorrectOption) cls+=" wrong";
       b.className=cls;
       b.innerHTML=`<span class="letter">${esc(o.label)}</span><span>${esc(o.text)}</span>`;
       b.onclick=()=>toggleAnswer(q,o.label);
       opts.appendChild(b);
     });
     const fb=card.querySelector(".feedback");
-    if(selected.length && correct && sameSet(selected, correct)) fb.className="feedback good";
-    else if(selected.length && correct && !sameSet(selected, correct)) fb.className="feedback bad";
-    else if(selected.length && !correct) fb.className="feedback warn";
+    if(confirmed && selected.length && correct && sameSet(selected, correct)) fb.className="feedback good";
+    else if(confirmed && selected.length && correct && !sameSet(selected, correct)) fb.className="feedback bad";
+    else if(confirmed && selected.length && !correct) fb.className="feedback warn";
     else fb.className="feedback neutral";
 
+    card.querySelector('[data-confirm="1"]').onclick=()=>confirmAnswer(q);
     card.querySelector('[data-mark="known"]').onclick=()=>mark(q,"known");
     card.querySelector('[data-mark="unknown"]').onclick=()=>mark(q,"unknown");
     card.querySelector('[data-clear="1"]').onclick=()=>{delete state[k]; saveState(); renderQuiz(); updateStats()};
@@ -314,9 +317,10 @@ function answerSetterHtml(k){
   </div>`;
 }
 
-function feedbackText(selected,correct){
+function feedbackText(selected,correct,confirmed){
   if(!selected.length) return "Noch nicht beantwortet";
   const s = selected.join(", ");
+  if(!confirmed) return `Ausgewählt: ${s}. Klicke auf „Antwort bestätigen“, wenn du fertig bist.`;
   if(!correct) return `Du hast ${s} gewählt. Lösung fehlt noch. Trag unten die richtige(n) Antwort(en) ein.`;
   const c = correct.join(", ");
   if(sameSet(selected, correct)) return `Richtig ✅ Lösung: ${c}`;
@@ -361,7 +365,16 @@ function toggleAnswer(q,label){
     else arr.push(label);
   }
 
-  state[k]={...(state[k]||{}),selected:arr.sort()};
+  const autoConfirm = correct && correct.length === 1;
+  state[k]={...(state[k]||{}),selected:arr.sort(),confirmed:autoConfirm};
+  saveState(); renderQuiz(); updateStats();
+}
+
+function confirmAnswer(q){
+  const k=key(q);
+  const arr=normalizeAnswer((state[k]||{}).selected)||[];
+  if(!arr.length){alert("Bitte zuerst eine Antwort auswählen.");return;}
+  state[k]={...(state[k]||{}),selected:arr,confirmed:true};
   saveState(); renderQuiz(); updateStats();
 }
 
@@ -377,9 +390,11 @@ function updateStats(){
     const k=key(q), st=state[k]||{}, c=getCorrect(k), selected=normalizeAnswer(st.selected)||[];
     if(selected.length){
       answered++;
-      if(!c) nokey++;
-      else if(sameSet(selected,c)) right++;
-      else wrong++;
+      if(st.confirmed){
+        if(!c) nokey++;
+        else if(sameSet(selected,c)) right++;
+        else wrong++;
+      }
     }
   });
   $("sAll").textContent=current.length;
