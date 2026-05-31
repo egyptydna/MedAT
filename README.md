@@ -19,7 +19,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .tab{background:#fff;color:#172033;border:1px solid var(--line);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:800}
 .tab.active{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
 .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}
 .stat span{color:var(--muted);display:block}
 .stat strong{font-size:22px}
@@ -30,7 +30,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 .question{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin:16px 0}
 .qtop{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
 .badge{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:#f8fafc;color:#667085;padding:5px 10px;font-size:13px;font-weight:700}
-.badge.multi{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+.badge.multi{background:#fff7ed;color:#9a3412;border-color:#fed7aa;margin-bottom:8px}
 .qtext{font-size:18px;font-weight:850;margin:0 0 13px;white-space:pre-wrap}
 .options{display:grid;gap:8px}
 .option{width:100%;text-align:left;background:#fff;color:var(--text);border:1px solid var(--line);padding:13px;border-radius:14px;font-weight:650;display:flex;gap:12px;align-items:flex-start}
@@ -50,9 +50,6 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 .small{padding:9px 11px;border-radius:12px;font-size:13px}
 .known{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .unknown{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
-.answerSet{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:14px;margin-top:10px}
-.answerSet span{font-weight:800;color:#9a3412}
-.answerSet button{padding:7px 10px;border-radius:10px;background:white;color:#9a3412;border:1px solid #fed7aa}
 .notice{padding:12px 14px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-top:12px;font-weight:700}
 .hidden{display:none!important}
 @media(max-width:950px){.controls{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.qtop{flex-direction:column}.timerbox{flex-direction:column;align-items:flex-start}}
@@ -61,7 +58,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 <div class="medat-app">
   <div class="medat-card">
     <h1 class="medat-title">MedAT BMS Altfragen Quiz</h1>
-    <p class="medat-sub">Simulationen getrennt nach Fach. Mehrfachantworten sind möglich: zuerst auswählen, dann Antwort bestätigen.</p>
+    <p class="medat-sub">Getrennt nach Fach. Lösungen wurden aus den grün markierten Antworten der PDFs übernommen.</p>
 
     <div class="controls">
       <div><label>Jahr</label><select id="year"></select></div>
@@ -112,8 +109,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
       <div class="stat"><span>Beantwortet</span><strong id="sAnswered">0</strong></div>
       <div class="stat"><span>Richtig</span><strong id="sRight">0</strong></div>
       <div class="stat"><span>Falsch</span><strong id="sWrong">0</strong></div>
-      <div class="stat"><span>Gespeichert</span><strong id="sNoKey">0</strong></div>
-      <div class="stat"><span>Lösungen lokal</span><strong id="sCustom">0</strong></div>
+      <div class="stat"><span>Lösungen erkannt</span><strong id="sKeyed">0</strong></div>
     </div>
 
     <div id="tabs" class="tabs"></div>
@@ -130,12 +126,11 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 <script>
 const DATA = JSON.parse(document.getElementById("medat-data").textContent);
 const SUMMARY = {"2019": {"Biologie": 41, "Chemie": 24, "Physik": 18, "Mathe": 12}, "2020": {"Biologie": 40, "Chemie": 24, "Physik": 18, "Mathe": 11}, "2021": {"Biologie": 40, "Chemie": 24, "Physik": 18, "Mathe": 12}, "2022": {"Biologie": 40, "Chemie": 23, "Physik": 18, "Mathe": 12}, "2023": {"Biologie": 40, "Chemie": 24, "Physik": 19, "Mathe": 12}, "2024": {"Biologie": 40, "Chemie": 23, "Physik": 20, "Mathe": 10}, "2025": {"Biologie": 40, "Chemie": 25, "Physik": 18, "Mathe": 12}, "2026": {"Biologie": 0, "Chemie": 0, "Physik": 0, "Mathe": 0}};
-const BUILTIN_ANSWER_KEY = {"2019-Biologie-1": ["E"], "2019-Biologie-2": ["A"], "2019-Biologie-3": ["B"], "2019-Biologie-4": ["A"], "2019-Biologie-5": ["B"], "2019-Biologie-6": ["A"], "2019-Biologie-7": ["B"], "2019-Biologie-9": ["E"], "2019-Biologie-12": ["B"], "2019-Biologie-20": ["B"], "2019-Chemie-1": ["B", "C"], "2020-Biologie-1": ["A"], "2020-Biologie-2": ["A"], "2020-Biologie-3": ["A"], "2020-Biologie-4": ["A"], "2020-Biologie-5": ["C"], "2020-Biologie-8": ["A"], "2020-Biologie-9": ["A"], "2020-Biologie-16": ["A"], "2020-Biologie-27": ["B"], "2022-Biologie-1": ["A"], "2022-Biologie-2": ["A"], "2022-Biologie-3": ["A"], "2022-Biologie-5": ["B"], "2022-Biologie-8": ["A"], "2022-Biologie-9": ["A"], "2022-Biologie-11": ["C"], "2022-Biologie-14": ["B"], "2022-Biologie-21": ["A"], "2023-Biologie-1": ["A"], "2023-Biologie-2": ["B"], "2023-Biologie-3": ["A"], "2023-Biologie-4": ["B"], "2023-Biologie-5": ["A"], "2024-Biologie-1": ["C"], "2024-Biologie-6": ["B"], "2024-Biologie-10": ["A"], "2024-Biologie-11": ["A"], "2024-Biologie-12": ["C"], "2025-Biologie-1": ["A"], "2025-Biologie-2": ["B"], "2025-Biologie-3": ["A"], "2025-Biologie-4": ["A"], "2025-Biologie-5": ["A"], "2025-Biologie-6": ["A"], "2025-Biologie-7": ["B"], "2025-Biologie-8": ["B"], "2025-Biologie-9": ["A"], "2025-Biologie-10": ["A"], "2025-Biologie-16": ["A"], "2025-Biologie-17": ["A"], "2025-Biologie-21": ["D"], "2025-Biologie-25": ["A"]};
+const ANSWER_KEY = {"2019-Biologie-1": ["E"], "2019-Biologie-2": ["A"], "2019-Biologie-3": ["B"], "2019-Biologie-4": ["A"], "2019-Biologie-5": ["B"], "2019-Biologie-6": ["A"], "2019-Biologie-7": ["B"], "2019-Biologie-8": ["B"], "2019-Biologie-9": ["E"], "2019-Biologie-10": ["B"], "2019-Biologie-11": ["A", "C", "D"], "2019-Biologie-12": ["B"], "2019-Biologie-13": ["C"], "2019-Biologie-14": ["D"], "2019-Biologie-15": ["C"], "2019-Biologie-16": ["B"], "2019-Biologie-17": ["A"], "2019-Biologie-19": ["B"], "2019-Biologie-20": ["B"], "2019-Biologie-21": ["A"], "2019-Biologie-22": ["D"], "2019-Biologie-23": ["E"], "2019-Biologie-24": ["D"], "2019-Biologie-25": ["E"], "2019-Biologie-26": ["D"], "2019-Biologie-27": ["E"], "2019-Biologie-28": ["A"], "2019-Biologie-29": ["A"], "2019-Biologie-30": ["D"], "2019-Biologie-31": ["A", "B", "D", "E"], "2019-Biologie-32": ["C"], "2019-Biologie-33": ["A"], "2019-Biologie-34": ["A"], "2019-Biologie-35": ["D"], "2019-Biologie-36": ["A"], "2019-Biologie-37": ["A"], "2019-Biologie-38": ["A"], "2019-Biologie-39": ["A"], "2019-Biologie-40": ["B"], "2019-Biologie-41": ["B"], "2019-Chemie-1": ["B", "C"], "2019-Chemie-2": ["A", "C"], "2019-Chemie-3": ["E"], "2019-Chemie-4": ["D"], "2019-Chemie-5": ["A", "D"], "2019-Chemie-6": ["C", "E"], "2019-Chemie-7": ["A"], "2019-Chemie-8": ["C"], "2019-Chemie-9": ["D"], "2019-Chemie-10": ["A"], "2019-Chemie-11": ["E"], "2019-Chemie-12": ["A"], "2019-Chemie-13": ["D"], "2019-Chemie-14": ["B"], "2019-Chemie-15": ["B"], "2019-Chemie-16": ["C"], "2019-Chemie-17": ["A"], "2019-Chemie-18": ["D"], "2019-Chemie-19": ["B"], "2019-Chemie-20": ["B", "C", "D"], "2019-Chemie-21": ["A"], "2019-Chemie-22": ["A", "C", "E"], "2019-Chemie-23": ["A", "E"], "2019-Chemie-24": ["A"], "2019-Physik-1": ["B"], "2019-Physik-2": ["D"], "2019-Physik-3": ["D"], "2019-Physik-4": ["D"], "2019-Physik-5": ["A"], "2019-Physik-6": ["C"], "2019-Physik-7": ["A"], "2019-Physik-8": ["A"], "2019-Physik-9": ["E"], "2019-Physik-10": ["B"], "2019-Physik-11": ["B"], "2019-Physik-12": ["C"], "2019-Physik-13": ["D"], "2019-Physik-14": ["E"], "2019-Physik-15": ["D"], "2019-Physik-16": ["C"], "2019-Physik-17": ["C"], "2019-Physik-18": ["A"], "2019-Mathe-1": ["A"], "2019-Mathe-2": ["C"], "2019-Mathe-3": ["C"], "2019-Mathe-4": ["D"], "2019-Mathe-5": ["E"], "2019-Mathe-6": ["A"], "2019-Mathe-7": ["B"], "2019-Mathe-8": ["C"], "2019-Mathe-9": ["D"], "2019-Mathe-10": ["D"], "2019-Mathe-11": ["C"], "2019-Mathe-12": ["A"], "2020-Biologie-1": ["A"], "2020-Biologie-2": ["A"], "2020-Biologie-3": ["A"], "2020-Biologie-4": ["A"], "2020-Biologie-5": ["C"], "2020-Biologie-6": ["C"], "2020-Biologie-7": ["A"], "2020-Biologie-8": ["A"], "2020-Biologie-9": ["A"], "2020-Biologie-10": ["A"], "2020-Biologie-11": ["A"], "2020-Biologie-12": ["A"], "2020-Biologie-13": ["A"], "2020-Biologie-14": ["C"], "2020-Biologie-15": ["D"], "2020-Biologie-16": ["A"], "2020-Biologie-17": ["C"], "2020-Biologie-18": ["A"], "2020-Biologie-19": ["A"], "2020-Biologie-20": ["A"], "2020-Biologie-21": ["A"], "2020-Biologie-22": ["A"], "2020-Biologie-23": ["A"], "2020-Biologie-24": ["C"], "2020-Biologie-25": ["A"], "2020-Biologie-26": ["A"], "2020-Biologie-27": ["B"], "2020-Biologie-28": ["A"], "2020-Biologie-29": ["C"], "2020-Biologie-30": ["E"], "2020-Biologie-31": ["E"], "2020-Biologie-32": ["A"], "2020-Biologie-33": ["B"], "2020-Biologie-34": ["E"], "2020-Biologie-35": ["B"], "2020-Biologie-36": ["B"], "2020-Biologie-37": ["A"], "2020-Biologie-38": ["A"], "2020-Biologie-39": ["A"], "2020-Biologie-40": ["E"], "2020-Chemie-1": ["A"], "2020-Chemie-2": ["C"], "2020-Chemie-4": ["C"], "2020-Chemie-5": ["C"], "2020-Chemie-6": ["A", "B", "C", "D", "E"], "2020-Chemie-7": ["D"], "2020-Chemie-8": ["A"], "2020-Chemie-9": ["C"], "2020-Chemie-10": ["C"], "2020-Chemie-11": ["B"], "2020-Chemie-12": ["B"], "2020-Chemie-13": ["B"], "2020-Chemie-14": ["B"], "2020-Chemie-15": ["B", "D"], "2020-Chemie-16": ["B", "C"], "2020-Chemie-17": ["A"], "2020-Chemie-18": ["A"], "2020-Chemie-19": ["A"], "2020-Chemie-20": ["B"], "2020-Chemie-21": ["E"], "2020-Chemie-22": ["B"], "2020-Chemie-23": ["A", "B", "D"], "2020-Chemie-24": ["A", "E", "F"], "2020-Chemie-25": ["A"], "2020-Physik-1": ["E"], "2020-Physik-2": ["A"], "2020-Physik-3": ["A", "B"], "2020-Physik-4": ["B"], "2020-Physik-6": ["B"], "2020-Physik-7": ["B"], "2020-Physik-8": ["D"], "2020-Physik-9": ["C"], "2020-Physik-10": ["C"], "2020-Physik-11": ["A"], "2020-Physik-12": ["D"], "2020-Physik-13": ["A", "C"], "2020-Physik-14": ["B"], "2020-Physik-15": ["B"], "2020-Physik-16": ["E"], "2020-Physik-17": ["A"], "2020-Physik-18": ["A"], "2020-Mathe-1": ["A", "C", "D"], "2020-Mathe-2": ["A"], "2020-Mathe-3": ["A", "B", "C", "D"], "2020-Mathe-4": ["A", "B", "C"], "2020-Mathe-5": ["A", "B"], "2020-Mathe-6": ["B", "C", "E"], "2020-Mathe-7": ["B", "C"], "2020-Mathe-8": ["A", "B", "C"], "2020-Mathe-9": ["A", "B"], "2020-Mathe-10": ["B", "C"], "2020-Mathe-11": ["C"], "2020-Mathe-12": ["B"], "2021-Biologie-1": ["D"], "2021-Biologie-2": ["C", "D"], "2021-Biologie-3": ["E"], "2021-Biologie-4": ["A"], "2021-Biologie-5": ["A"], "2021-Biologie-6": ["A"], "2021-Biologie-7": ["A"], "2021-Biologie-9": ["C"], "2021-Biologie-10": ["C"], "2021-Biologie-11": ["A"], "2021-Biologie-12": ["A"], "2021-Biologie-13": ["B"], "2021-Biologie-14": ["D"], "2021-Biologie-15": ["D"], "2021-Biologie-16": ["B"], "2021-Biologie-17": ["D"], "2021-Biologie-18": ["D"], "2021-Biologie-19": ["B"], "2021-Biologie-20": ["C"], "2021-Biologie-21": ["A"], "2021-Biologie-22": ["B"], "2021-Biologie-23": ["D"], "2021-Biologie-24": ["A"], "2021-Biologie-26": ["A"], "2021-Biologie-27": ["A"], "2021-Biologie-28": ["A"], "2021-Biologie-29": ["A"], "2021-Biologie-30": ["C"], "2021-Biologie-31": ["A"], "2021-Biologie-32": ["A"], "2021-Biologie-33": ["D"], "2021-Biologie-34": ["B"], "2021-Biologie-35": ["C"], "2021-Biologie-36": ["A"], "2021-Biologie-37": ["C"], "2021-Biologie-38": ["C"], "2021-Biologie-39": ["D"], "2021-Biologie-40": ["A"], "2021-Chemie-1": ["A"], "2021-Chemie-2": ["E"], "2021-Chemie-3": ["D"], "2021-Chemie-4": ["A"], "2021-Chemie-5": ["A"], "2021-Chemie-6": ["A"], "2021-Chemie-7": ["D"], "2021-Chemie-8": ["A", "D"], "2021-Chemie-9": ["A", "D", "E"], "2021-Chemie-10": ["A", "B", "C"], "2021-Chemie-11": ["B", "D"], "2021-Chemie-12": ["B"], "2021-Chemie-13": ["A"], "2021-Chemie-14": ["B"], "2021-Chemie-15": ["A"], "2021-Chemie-16": ["D", "E"], "2021-Chemie-17": ["C"], "2021-Chemie-18": ["A"], "2021-Chemie-19": ["C"], "2021-Chemie-20": ["B"], "2021-Chemie-21": ["A"], "2021-Chemie-22": ["A", "C"], "2021-Chemie-23": ["B"], "2021-Chemie-24": ["B"], "2021-Physik-1": ["A"], "2021-Physik-2": ["A"], "2021-Physik-3": ["B"], "2021-Physik-4": ["A"], "2021-Physik-5": ["B"], "2021-Physik-6": ["A"], "2021-Physik-9": ["D"], "2021-Physik-10": ["D"], "2021-Physik-11": ["D"], "2021-Physik-12": ["B"], "2021-Physik-13": ["B"], "2021-Physik-14": ["B"], "2021-Physik-15": ["A", "C", "D", "F"], "2021-Physik-16": ["B"], "2021-Physik-17": ["C"], "2021-Physik-18": ["B"], "2021-Mathe-1": ["A", "B", "D"], "2021-Mathe-2": ["A", "B"], "2021-Mathe-3": ["A"], "2021-Mathe-4": ["A", "B", "C", "E"], "2021-Mathe-5": ["A", "B", "C"], "2021-Mathe-6": ["B", "C", "D"], "2021-Mathe-7": ["A", "B"], "2021-Mathe-8": ["A", "C"], "2021-Mathe-9": ["A", "B", "C"], "2021-Mathe-10": ["A"], "2021-Mathe-11": ["A"], "2021-Mathe-12": ["A"], "2022-Biologie-1": ["A"], "2022-Biologie-2": ["A"], "2022-Biologie-3": ["A"], "2022-Biologie-4": ["A"], "2022-Biologie-5": ["B"], "2022-Biologie-6": ["D"], "2022-Biologie-7": ["A", "B", "C", "D", "E"], "2022-Biologie-8": ["A"], "2022-Biologie-9": ["A"], "2022-Biologie-11": ["C"], "2022-Biologie-12": ["A"], "2022-Biologie-13": ["D"], "2022-Biologie-14": ["B"], "2022-Biologie-16": ["A"], "2022-Biologie-17": ["A"], "2022-Biologie-18": ["A"], "2022-Biologie-19": ["A"], "2022-Biologie-20": ["A"], "2022-Biologie-21": ["A"], "2022-Biologie-23": ["E"], "2022-Biologie-25": ["A"], "2022-Biologie-26": ["C"], "2022-Biologie-27": ["A"], "2022-Biologie-28": ["A"], "2022-Biologie-29": ["A"], "2022-Biologie-30": ["B"], "2022-Biologie-31": ["A"], "2022-Biologie-32": ["C"], "2022-Biologie-33": ["B"], "2022-Biologie-34": ["A"], "2022-Biologie-35": ["A"], "2022-Biologie-36": ["A"], "2022-Biologie-37": ["A"], "2022-Biologie-38": ["B"], "2022-Biologie-39": ["A"], "2022-Biologie-40": ["A"], "2022-Chemie-1": ["A"], "2022-Chemie-2": ["D"], "2022-Chemie-3": ["E"], "2022-Chemie-5": ["D"], "2022-Chemie-6": ["D"], "2022-Chemie-7": ["A"], "2022-Chemie-8": ["B"], "2022-Chemie-9": ["B"], "2022-Chemie-10": ["B"], "2022-Chemie-11": ["B", "D"], "2022-Chemie-12": ["D"], "2022-Chemie-13": ["B"], "2022-Chemie-14": ["A"], "2022-Chemie-16": ["A"], "2022-Chemie-17": ["A"], "2022-Chemie-18": ["A"], "2022-Chemie-19": ["A"], "2022-Chemie-20": ["A"], "2022-Chemie-21": ["A"], "2022-Chemie-22": ["B", "D"], "2022-Chemie-23": ["A"], "2022-Physik-1": ["A"], "2022-Physik-3": ["B"], "2022-Physik-4": ["A"], "2022-Physik-5": ["C"], "2022-Physik-6": ["A"], "2022-Physik-7": ["B"], "2022-Physik-8": ["A"], "2022-Physik-9": ["A", "B"], "2022-Physik-10": ["B"], "2022-Physik-11": ["A"], "2022-Physik-12": ["D"], "2022-Physik-13": ["B"], "2022-Physik-14": ["B"], "2022-Physik-15": ["A"], "2022-Physik-17": ["A"], "2022-Physik-18": ["A"], "2022-Mathe-1": ["A", "B", "D"], "2022-Mathe-2": ["A", "B", "C"], "2022-Mathe-3": ["A", "B"], "2022-Mathe-4": ["A", "B", "C"], "2022-Mathe-5": ["A", "B"], "2022-Mathe-6": ["A", "B", "C", "D"], "2022-Mathe-7": ["A", "B", "C"], "2022-Mathe-9": ["A", "B"], "2022-Mathe-10": ["A", "B"], "2022-Mathe-11": ["A"], "2022-Mathe-12": ["A"], "2022-Mathe-8": ["A", "B"], "2023-Biologie-1": ["A"], "2023-Biologie-2": ["B"], "2023-Biologie-3": ["A"], "2023-Biologie-4": ["B"], "2023-Biologie-5": ["A"], "2023-Biologie-6": ["B"], "2023-Biologie-7": ["A"], "2023-Biologie-8": ["A"], "2023-Biologie-9": ["A"], "2023-Biologie-10": ["A"], "2023-Biologie-11": ["A"], "2023-Biologie-12": ["A"], "2023-Biologie-13": ["F"], "2023-Biologie-14": ["A"], "2023-Biologie-15": ["E"], "2023-Biologie-16": ["C"], "2023-Biologie-17": ["B"], "2023-Biologie-18": ["C"], "2023-Biologie-19": ["B"], "2023-Biologie-20": ["C"], "2023-Biologie-21": ["A"], "2023-Biologie-22": ["A"], "2023-Biologie-23": ["A"], "2023-Biologie-24": ["D"], "2023-Biologie-25": ["A"], "2023-Biologie-26": ["A"], "2023-Biologie-27": ["B", "C"], "2023-Biologie-28": ["A"], "2023-Biologie-30": ["A"], "2023-Biologie-31": ["A"], "2023-Biologie-32": ["A"], "2023-Biologie-33": ["A"], "2023-Biologie-34": ["A"], "2023-Biologie-35": ["C"], "2023-Biologie-36": ["A"], "2023-Biologie-37": ["A"], "2023-Biologie-38": ["B"], "2023-Biologie-39": ["A"], "2023-Chemie-1": ["D"], "2023-Chemie-2": ["A", "C"], "2023-Chemie-3": ["A", "E"], "2023-Chemie-4": ["D"], "2023-Chemie-5": ["A", "C"], "2023-Chemie-6": ["E"], "2023-Chemie-7": ["A"], "2023-Chemie-8": ["B"], "2023-Chemie-9": ["A", "C"], "2023-Chemie-10": ["B"], "2023-Chemie-11": ["A"], "2023-Chemie-12": ["B"], "2023-Chemie-13": ["E"], "2023-Chemie-14": ["D", "E"], "2023-Chemie-15": ["B", "D"], "2023-Chemie-16": ["A"], "2023-Chemie-17": ["C"], "2023-Chemie-18": ["A"], "2023-Chemie-19": ["A", "B", "C"], "2023-Chemie-20": ["C"], "2023-Chemie-21": ["A"], "2023-Chemie-22": ["B"], "2023-Physik-1": ["D"], "2023-Physik-2": ["B"], "2023-Physik-4": ["A"], "2023-Physik-5": ["A"], "2023-Physik-6": ["A"], "2023-Physik-7": ["A"], "2023-Physik-8": ["A"], "2023-Physik-9": ["A"], "2023-Physik-10": ["B", "D", "E"], "2023-Physik-11": ["A"], "2023-Physik-12": ["B"], "2023-Physik-13": ["A"], "2023-Physik-14": ["A"], "2023-Physik-15": ["C"], "2023-Physik-16": ["B"], "2023-Physik-17": ["A"], "2023-Physik-18": ["A"], "2023-Physik-19": ["A"], "2023-Mathe-1": ["A", "C"], "2023-Mathe-2": ["B", "C", "D", "E"], "2023-Mathe-3": ["A", "C"], "2023-Mathe-4": ["A", "B"], "2023-Mathe-5": ["A", "B", "C"], "2023-Mathe-6": ["A", "B", "C", "D"], "2023-Mathe-7": ["A", "B", "E"], "2023-Mathe-8": ["A", "B", "D"], "2023-Mathe-9": ["A", "B", "C"], "2023-Mathe-10": ["B", "E"], "2023-Mathe-11": ["A", "B"], "2023-Mathe-12": ["C"], "2024-Biologie-1": ["C"], "2024-Biologie-2": ["A"], "2024-Biologie-3": ["D"], "2024-Biologie-4": ["A"], "2024-Biologie-5": ["A"], "2024-Biologie-6": ["B"], "2024-Biologie-7": ["A"], "2024-Biologie-8": ["A"], "2024-Biologie-10": ["A"], "2024-Biologie-11": ["A"], "2024-Biologie-12": ["C"], "2024-Biologie-14": ["B"], "2024-Biologie-15": ["C"], "2024-Biologie-16": ["C"], "2024-Biologie-17": ["A"], "2024-Biologie-18": ["A"], "2024-Biologie-19": ["A"], "2024-Biologie-20": ["B"], "2024-Biologie-21": ["E"], "2024-Biologie-22": ["B"], "2024-Biologie-23": ["A", "B"], "2024-Biologie-24": ["A"], "2024-Biologie-25": ["C", "D"], "2024-Biologie-26": ["A"], "2024-Biologie-27": ["B"], "2024-Biologie-28": ["A"], "2024-Biologie-29": ["B"], "2024-Biologie-30": ["A"], "2024-Biologie-31": ["C"], "2024-Biologie-32": ["A"], "2024-Biologie-33": ["C"], "2024-Biologie-34": ["A"], "2024-Biologie-35": ["A"], "2024-Biologie-36": ["B"], "2024-Biologie-37": ["C"], "2024-Biologie-39": ["A"], "2024-Biologie-40": ["A"], "2024-Chemie-1": ["A"], "2024-Chemie-2": ["A"], "2024-Chemie-3": ["A"], "2024-Chemie-4": ["A"], "2024-Chemie-5": ["A"], "2024-Chemie-6": ["C"], "2024-Chemie-7": ["C"], "2024-Chemie-8": ["A", "E"], "2024-Chemie-9": ["A"], "2024-Chemie-10": ["E"], "2024-Chemie-11": ["A"], "2024-Chemie-13": ["A"], "2024-Chemie-14": ["A"], "2024-Chemie-15": ["A"], "2024-Chemie-16": ["B"], "2024-Chemie-17": ["A", "B"], "2024-Chemie-18": ["A"], "2024-Chemie-19": ["C"], "2024-Chemie-20": ["C"], "2024-Chemie-21": ["A"], "2024-Chemie-22": ["D"], "2024-Physik-1": ["A"], "2024-Physik-2": ["C"], "2024-Physik-3": ["A", "E"], "2024-Physik-4": ["C"], "2024-Physik-6": ["C", "D"], "2024-Physik-7": ["A"], "2024-Physik-8": ["B"], "2024-Physik-9": ["A"], "2024-Physik-10": ["A"], "2024-Physik-11": ["A"], "2024-Physik-12": ["A"], "2024-Physik-13": ["A"], "2024-Physik-14": ["B"], "2024-Physik-15": ["A"], "2024-Physik-16": ["D"], "2024-Physik-18": ["D"], "2024-Physik-20": ["C"], "2024-Mathe-1": ["A", "E"], "2024-Mathe-2": ["A", "B"], "2024-Mathe-3": ["D"], "2024-Mathe-4": ["B"], "2024-Mathe-6": ["A", "B"], "2024-Mathe-7": ["C"], "2024-Mathe-9": ["A"], "2025-Biologie-1": ["A"], "2025-Biologie-2": ["B"], "2025-Biologie-3": ["A"], "2025-Biologie-4": ["A"], "2025-Biologie-5": ["A"], "2025-Biologie-6": ["A"], "2025-Biologie-7": ["B"], "2025-Biologie-8": ["B"], "2025-Biologie-9": ["A"], "2025-Biologie-10": ["A"], "2025-Biologie-11": ["B"], "2025-Biologie-12": ["A"], "2025-Biologie-13": ["A"], "2025-Biologie-14": ["A"], "2025-Biologie-16": ["A"], "2025-Biologie-17": ["A"], "2025-Biologie-20": ["A"], "2025-Biologie-21": ["D"], "2025-Biologie-22": ["B"], "2025-Biologie-23": ["A"], "2025-Biologie-24": ["B"], "2025-Biologie-25": ["A"], "2025-Biologie-26": ["E"], "2025-Biologie-27": ["D"], "2025-Biologie-28": ["A"], "2025-Biologie-29": ["A"], "2025-Biologie-31": ["A"], "2025-Biologie-32": ["A"], "2025-Biologie-33": ["A"], "2025-Biologie-34": ["A"], "2025-Biologie-35": ["A"], "2025-Biologie-36": ["A"], "2025-Biologie-38": ["A"], "2025-Biologie-39": ["A"], "2025-Biologie-40": ["B"], "2025-Biologie-41": ["A"], "2025-Chemie-1": ["A"], "2025-Chemie-2": ["D"], "2025-Chemie-4": ["A"], "2025-Chemie-5": ["C"], "2025-Chemie-6": ["A"], "2025-Chemie-7": ["A"], "2025-Chemie-9": ["A"], "2025-Chemie-10": ["E"], "2025-Chemie-12": ["B"], "2025-Chemie-14": ["E"], "2025-Chemie-15": ["A"], "2025-Chemie-21": ["B"], "2025-Chemie-22": ["B"], "2025-Chemie-23": ["C"], "2025-Chemie-24": ["A"], "2025-Chemie-25": ["C"], "2025-Physik-1": ["D"], "2025-Physik-2": ["A", "D"], "2025-Physik-3": ["A"], "2025-Physik-4": ["A"], "2025-Physik-7": ["B"], "2025-Physik-8": ["A"], "2025-Physik-9": ["A"], "2025-Physik-10": ["A"], "2025-Physik-11": ["A"], "2025-Physik-12": ["A"], "2025-Physik-13": ["C"], "2025-Physik-15": ["B"], "2025-Mathe-3": ["A"], "2025-Mathe-5": ["A", "C"], "2025-Mathe-7": ["A", "B", "C"], "2025-Mathe-9": ["A"], "2025-Mathe-11": ["A", "D"], "2025-Mathe-12": ["A"], "2025-Mathe-6": ["A"], "2025-Mathe-8": ["C"], "2025-Mathe-2": ["B", "C"], "2025-Mathe-4": ["A", "B"]};
 const SUBJECTS = ["Biologie","Chemie","Physik","Mathe"];
 const SUBJECT_TIMES = {Biologie:30, Chemie:18, Physik:16, Mathe:11};
 let current = [];
 let state = loadState();
-let customAnswers = loadCustomAnswers();
 let timerSeconds = 30 * 60;
 let timerInterval = null;
 let timerPaused = false;
@@ -150,15 +145,13 @@ function normalizeAnswer(v){
   if(Array.isArray(v)) return [...new Set(v.map(x=>String(x).trim().toUpperCase()).filter(Boolean))].sort();
   return [...new Set(String(v).split(/[,\s]+/).map(x=>x.trim().toUpperCase()).filter(Boolean))].sort();
 }
-function getCorrect(k){return normalizeAnswer(customAnswers[k] || BUILTIN_ANSWER_KEY[k])}
+function getCorrect(k){return normalizeAnswer(ANSWER_KEY[k])}
 function sameSet(a,b){
   a=normalizeAnswer(a)||[]; b=normalizeAnswer(b)||[];
   return a.length===b.length && a.every((x,i)=>x===b[i]);
 }
-function loadState(){try{return JSON.parse(localStorage.getItem("medat_bms_state_v6")||"{}")}catch(e){return{}}}
-function saveState(){localStorage.setItem("medat_bms_state_v6",JSON.stringify(state))}
-function loadCustomAnswers(){try{return JSON.parse(localStorage.getItem("medat_bms_custom_answers_v3")||"{}")}catch(e){return{}}}
-function saveCustomAnswers(){localStorage.setItem("medat_bms_custom_answers_v3",JSON.stringify(customAnswers))}
+function loadState(){try{return JSON.parse(localStorage.getItem("medat_bms_state_v7")||"{}")}catch(e){return{}}}
+function saveState(){localStorage.setItem("medat_bms_state_v7",JSON.stringify(state))}
 
 function initYears(){
   const y=$("year"); y.innerHTML="";
@@ -265,13 +258,11 @@ function renderQuiz(){
       <p class="qtext">${esc(q.text)}</p>
       <div class="options"></div>
       <div class="feedback neutral">${feedbackText(selected,correct,confirmed)}</div>
-      
       <div class="markbar">
         <button class="small" data-confirm="1">Antwort bestätigen</button>
         <button class="small known" data-mark="known">Gewusst</button>
         <button class="small unknown" data-mark="unknown">Nicht gewusst</button>
         <button class="small secondary" data-clear="1">Diese Frage löschen</button>
-        
       </div>`;
     const opts=card.querySelector(".options");
     (q.options||[]).forEach(o=>{
@@ -302,27 +293,21 @@ function renderQuiz(){
   });
 }
 
-
 function feedbackText(selected,correct,confirmed){
   if(!selected.length) return "Noch nicht beantwortet";
   const s = selected.join(", ");
   if(!confirmed) return `Ausgewählt: ${s}. Klicke auf „Antwort bestätigen“, wenn du fertig bist.`;
-  if(!correct) return `Antwort gespeichert: ${s}`;
+  if(!correct) return `Keine grün markierte Lösung in der PDF erkannt. Deine Antwort: ${s}`;
   const c = correct.join(", ");
   if(sameSet(selected, correct)) return `Richtig ✅ Lösung: ${c}`;
   return `Falsch ❌ Deine Antwort: ${s}. Richtige Antwort: ${c}`;
 }
-
-
 
 function toggleAnswer(q,label){
   const k=key(q);
   const correct=getCorrect(k);
   let arr=normalizeAnswer((state[k]||{}).selected)||[];
 
-  // Wenn Lösungsschlüssel mehrere Antworten hat: togglen.
-  // Wenn keine Lösung bekannt ist: auch togglen, damit man mehrere auswählen kann.
-  // Wenn nur eine Lösung bekannt ist: wie Single Choice verhalten.
   if(correct && correct.length === 1){
     arr=[label];
   } else {
@@ -330,8 +315,7 @@ function toggleAnswer(q,label){
     else arr.push(label);
   }
 
-  const autoConfirm = correct && correct.length === 1;
-  state[k]={...(state[k]||{}),selected:arr.sort(),confirmed:autoConfirm};
+  state[k]={...(state[k]||{}),selected:arr.sort(),confirmed:false};
   saveState(); renderQuiz(); updateStats();
 }
 
@@ -350,14 +334,14 @@ function mark(q,m){
 }
 
 function updateStats(){
-  let answered=0,right=0,wrong=0,nokey=0;
+  let answered=0,right=0,wrong=0,keyed=0;
   current.forEach(q=>{
     const k=key(q), st=state[k]||{}, c=getCorrect(k), selected=normalizeAnswer(st.selected)||[];
+    if(c) keyed++;
     if(selected.length){
       answered++;
-      if(st.confirmed){
-        if(!c) nokey++;
-        else if(sameSet(selected,c)) right++;
+      if(st.confirmed && c){
+        if(sameSet(selected,c)) right++;
         else wrong++;
       }
     }
@@ -366,8 +350,7 @@ function updateStats(){
   $("sAnswered").textContent=answered;
   $("sRight").textContent=right;
   $("sWrong").textContent=wrong;
-  $("sNoKey").textContent=nokey;
-  $("sCustom").textContent=Object.keys(customAnswers).length;
+  $("sKeyed").textContent=keyed;
 }
 
 function resetSelection(){
@@ -375,15 +358,15 @@ function resetSelection(){
   start();
 }
 function resetProgress(){
-  if(confirm("Wirklich gesamten lokalen Fortschritt und lokale Lösungen löschen?")){
-    state={}; customAnswers={}; saveState(); saveCustomAnswers(); start();
+  if(confirm("Wirklich gesamten lokalen Fortschritt löschen?")){
+    state={}; saveState(); start();
   }
 }
 function exportProgress(){
-  const out={state, customAnswers};
+  const out={state};
   const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob); a.download="medat_bms_fortschritt_und_loesungen.json"; a.click();
+  a.href=URL.createObjectURL(blob); a.download="medat_bms_fortschritt.json"; a.click();
   URL.revokeObjectURL(a.href);
 }
 
