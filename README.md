@@ -50,9 +50,6 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 .small{padding:9px 11px;border-radius:12px;font-size:13px}
 .known{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .unknown{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
-.answerSet{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:14px;margin-top:10px}
-.answerSet span{font-weight:800;color:#9a3412}
-.answerSet button{padding:7px 10px;border-radius:10px;background:white;color:#9a3412;border:1px solid #fed7aa}
 .notice{padding:12px 14px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-top:12px;font-weight:700}
 .hidden{display:none!important}
 @media(max-width:950px){.controls{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.qtop{flex-direction:column}.timerbox{flex-direction:column;align-items:flex-start}}
@@ -61,7 +58,7 @@ button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
 <div class="medat-app">
   <div class="medat-card">
     <h1 class="medat-title">MedAT BMS Altfragen Quiz</h1>
-    <p class="medat-sub">Simulationen getrennt nach Fach. Mehrfachantworten sind möglich: zuerst auswählen, dann Antwort bestätigen.</p>
+    <p class="medat-sub">Simulationen getrennt nach Fach. Mehrfachantworten sind möglich: zuerst auswählen, dann Antwort bestätigen. Keine Lösung-eintragen-Box.</p>
 
     <div class="controls">
       <div><label>Jahr</label><select id="year"></select></div>
@@ -265,13 +262,13 @@ function renderQuiz(){
       <p class="qtext">${esc(q.text)}</p>
       <div class="options"></div>
       <div class="feedback neutral">${feedbackText(selected,correct,confirmed)}</div>
-      ${!correct ? answerSetterHtml(k) : ""}
+      
       <div class="markbar">
         <button class="small" data-confirm="1">Antwort bestätigen</button>
         <button class="small known" data-mark="known">Gewusst</button>
         <button class="small unknown" data-mark="unknown">Nicht gewusst</button>
         <button class="small secondary" data-clear="1">Diese Frage löschen</button>
-        ${correct ? `<button class="small secondary" data-edit-answer="1">Lösung ändern</button>` : ""}
+        
       </div>`;
     const opts=card.querySelector(".options");
     (q.options||[]).forEach(o=>{
@@ -298,57 +295,22 @@ function renderQuiz(){
     card.querySelector('[data-mark="unknown"]').onclick=()=>mark(q,"unknown");
     card.querySelector('[data-clear="1"]').onclick=()=>{delete state[k]; saveState(); renderQuiz(); updateStats()};
 
-    const edit=card.querySelector('[data-edit-answer="1"]');
-    if(edit) edit.onclick=()=>showAnswerEdit(k);
-
-    card.querySelectorAll("[data-set-answer]").forEach(btn=>{
-      btn.onclick=()=>toggleCorrectAnswer(k,btn.getAttribute("data-set-answer"));
-    });
-
     root.appendChild(card);
   });
 }
 
-function answerSetterHtml(k){
-  return `<div class="answerSet">
-    <span>Lösung fehlt. Eine oder mehrere richtige Antworten anklicken:</span>
-    ${["A","B","C","D","E","F"].map(l=>`<button data-set-answer="${l}">${l}</button>`).join("")}
-    <button data-set-answer="DONE">Fertig</button>
-  </div>`;
-}
 
 function feedbackText(selected,correct,confirmed){
   if(!selected.length) return "Noch nicht beantwortet";
   const s = selected.join(", ");
   if(!confirmed) return `Ausgewählt: ${s}. Klicke auf „Antwort bestätigen“, wenn du fertig bist.`;
-  if(!correct) return `Du hast ${s} gewählt. Lösung fehlt noch. Trag unten die richtige(n) Antwort(en) ein.`;
+  if(!correct) return `Du hast ${s} gewählt. Für diese Frage ist noch keine Lösung im Code hinterlegt.`;
   const c = correct.join(", ");
   if(sameSet(selected, correct)) return `Richtig ✅ Lösung: ${c}`;
   return `Falsch ❌ Deine Antwort: ${s}. Richtige Antwort: ${c}`;
 }
 
-function toggleCorrectAnswer(k,letter){
-  if(letter==="DONE"){renderQuiz(); updateStats(); return;}
-  let arr=normalizeAnswer(customAnswers[k]) || [];
-  if(arr.includes(letter)) arr=arr.filter(x=>x!==letter);
-  else arr.push(letter);
-  customAnswers[k]=arr.sort();
-  saveCustomAnswers();
-  renderQuiz(); updateStats();
-}
 
-function showAnswerEdit(k){
-  const old=(getCorrect(k)||[]).join(",");
-  const val=prompt("Richtige Lösung(en) eintragen, z. B. A oder B,C", old);
-  if(!val) return;
-  const arr=normalizeAnswer(val);
-  if(!arr || !arr.length){return;}
-  const allowed=["A","B","C","D","E","F"];
-  if(arr.some(x=>!allowed.includes(x))){alert("Bitte nur A, B, C, D, E oder F eingeben.");return;}
-  customAnswers[k]=arr;
-  saveCustomAnswers();
-  renderQuiz(); updateStats();
-}
 
 function toggleAnswer(q,label){
   const k=key(q);
